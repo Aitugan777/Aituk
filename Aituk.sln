@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AitukCore", "AitukCore\AitukCore.csproj", "{7C36D9D7-04AB-4FD6-92E7-43552C88BC2F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APartners", "APartners\APartners.csproj", "{886688B0-4045-47CB-AFEE-EFD43A926997}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7C36D9D7-04AB-4FD6-92E7-43552C88BC2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C36D9D7-04AB-4FD6-92E7-43552C88BC2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C36D9D7-04AB-4FD6-92E7-43552C88BC2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C36D9D7-04AB-4FD6-92E7-43552C88BC2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{886688B0-4045-47CB-AFEE-EFD43A926997}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{886688B0-4045-47CB-AFEE-EFD43A926997}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{886688B0-4045-47CB-AFEE-EFD43A926997}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{886688B0-4045-47CB-AFEE-EFD43A926997}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EED739B9-3D3C-4B0A-B1F6-C59E0DB8DB1C}
+	EndGlobalSection
+EndGlobal

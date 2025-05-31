@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="APartners.Views.AuthView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:APartners.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1200">
+
+    <Border VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="200">
+        <StackPanel>
+            <Label Content="Авторизация" HorizontalAlignment="Center" FontSize="18"/>
+            <Label Content="Логин" />
+            <TextBox Text="{Binding Login}" />
+            <Label Content="Пароль" />
+            <!--PasswordBox нельзя забиндить, поэтому достучаемся до него через имя-->
+            <PasswordBox Name="pbx_Password" PasswordChanged="PasswordChanged" />
+            <Button Content=" Войти " Margin="0, 10, 0, 0" HorizontalAlignment="Center" Command="{Binding LoginCommand}" />
+        </StackPanel>
+    </Border>
+</UserControl>
