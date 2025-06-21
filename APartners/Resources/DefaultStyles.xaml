@@ -58,7 +58,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
@@ -76,11 +76,11 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#80007ACC" />
-                            <!-- Синий с 50% прозрачностью -->
+                            <Setter Property="Background" Value="#1A0000FF" />
+                            <!-- Синий с 10% прозрачностью -->
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="#FF007ACC" />
+                            <Setter Property="Background" Value="#2A0000FF" />
                             <!-- Полный синий при клике -->
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -88,5 +88,68 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+
+    <!-- Анимации для наведения мыши -->
+    <Storyboard x:Key="MouseOverAnimation">
+        <ColorAnimation Storyboard.TargetName="Bd"
+                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                        To="#22000000"
+                        Duration="0:0:0.2"/>
+    </Storyboard>
+
+    <Storyboard x:Key="MouseOutAnimation">
+        <ColorAnimation Storyboard.TargetName="Bd"
+                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                        To="Transparent"
+                        Duration="0:0:0.2"/>
+    </Storyboard>
+
+    <!-- Стиль для ListBoxItem -->
+    <Style TargetType="ListBoxItem" x:Key="AnimatedListBoxItemStyle">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding" Value="8"/>
+        <Setter Property="Margin" Value="4"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Focusable" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="Bd"
+                            Background="Transparent"
+                            CornerRadius="8"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter Margin="4"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Stretch"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource MouseOverAnimation}"/>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource MouseOutAnimation}"/>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#33007ACC"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Необязательно: шаблон элемента для переиспользования -->
+    <DataTemplate x:Key="ShopItemTemplate">
+        <StackPanel Margin="4">
+            <TextBlock Text="{Binding Name}"
+                       FontSize="18"
+                       FontWeight="Medium"
+                       TextWrapping="Wrap"
+                       TextAlignment="Left" />
+        </StackPanel>
+    </DataTemplate>
 
 </ResourceDictionary>

@@ -18,15 +18,11 @@ namespace APartners.ViewModels
         }
 
         public UserControl AuthUserControl { get; }
-        public UserControl ShopsUserControl { get; }
 
         public MainViewModel()
         {
             AuthUserControl = new AuthView();
             AuthUserControl.DataContext = new AuthViewModel();
-
-            ShopsUserControl = new ShopsView();
-            ShopsUserControl.DataContext = new ShopsViewModel();
 
             //Устанавливаем дефолтный UserControl при первом запуске приложения
             SelectedUserControl = AuthUserControl;

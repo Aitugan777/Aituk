@@ -18,7 +18,7 @@ namespace APartners.Services
 
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<IAuthService, AuthService>();
-            services.AddSingleton<IShopService, ShopService>();
+            services.AddSingleton<IShopService, TestShopService>();
 
             ServiceProvider = services.BuildServiceProvider();
         }

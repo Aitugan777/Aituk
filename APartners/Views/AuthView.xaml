@@ -9,13 +9,13 @@
 
     <Border VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="200">
         <StackPanel>
-            <Label Content="Авторизация" HorizontalAlignment="Center" FontSize="18"/>
-            <Label Content="Логин" />
+            <Label Content="AITUK" Margin="0, 0, 0, 20" HorizontalAlignment="Center" FontSize="18" FontWeight="SemiBold"/>
             <TextBox Text="{Binding Login}" />
-            <Label Content="Пароль" />
+            <Label Content="логин" Foreground="Gray"/>
             <!--PasswordBox нельзя забиндить, поэтому достучаемся до него через имя-->
             <PasswordBox Name="pbx_Password" PasswordChanged="PasswordChanged" />
-            <Button Content=" Войти " Margin="0, 10, 0, 0" HorizontalAlignment="Center" Command="{Binding LoginCommand}" />
+            <Label Content="пароль" Foreground="Gray"/>
+            <Button Content=" Войти " Margin="0, 10, 0, 0" HorizontalAlignment="Center" FontSize="14" Command="{Binding LoginCommand}" />
         </StackPanel>
     </Border>
 </UserControl>

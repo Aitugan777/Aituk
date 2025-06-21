@@ -6,8 +6,13 @@
         xmlns:local="clr-namespace:APartners"
         mc:Ignorable="d"
         Title="MainWindow" Height="700" Width="1200">
-    
+
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
         <ContentControl Content="{Binding SelectedUserControl}" />
+        <TextBlock Grid.Row="1" Text="Aituk Corp. 2025" FontSize="12" FontWeight="Medium" HorizontalAlignment="Right" Margin="0, 0, 10, 10"/>
     </Grid>
 </Window>
