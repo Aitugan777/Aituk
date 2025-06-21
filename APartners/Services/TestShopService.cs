@@ -45,5 +45,10 @@ namespace APartners.Services
                 checkShop.Description = shop.Description;
             }
         }
+
+        public void DeleteShop(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
