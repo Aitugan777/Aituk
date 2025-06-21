@@ -10,7 +10,7 @@ namespace APartners.Services
     {
         public async Task<bool> Authorize(string username, string password)
         {
-            //Реализовать логику авторизации, отправляем запрос и получаем токен
+            //Реализовать логику авторизации: отправляем запрос и получаем токен
             PublicProperties.JWT = "testToken";
             return true;
         }
