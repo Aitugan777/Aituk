@@ -27,9 +27,9 @@ namespace AitukCore.Models
         public int SellerId { get; set; }
 
         [JsonIgnore]
-        public ASeller Seller { get; set; }
+        public ASeller? Seller { get; set; }
 
         [JsonIgnore]
-        public List<AProduct> Products { get; set; }
+        public List<AProduct>? Products { get; set; }
     }
 }

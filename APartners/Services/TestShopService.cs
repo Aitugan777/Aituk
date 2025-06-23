@@ -25,17 +25,24 @@ namespace APartners.Services
 
             AllShops = JsonConvert.DeserializeObject<List<AShop>>(json)!;
         }
-        public List<AShop> GetShops()
-        {
-            return AllShops;
-        }
 
-        public void AddShop(AShop shop)
+        Task IShopService.AddShop(AShop shop)
         {
             AllShops.Add(shop);
+            return Task.CompletedTask;
         }
 
-        public void SaveShop(AShop shop)
+        Task IShopService.DeleteShop(int id)
+        {
+            return Task.CompletedTask;
+        }
+
+        Task<List<AShop>> IShopService.GetShops()
+        {
+            return Task.FromResult(AllShops);
+        }
+
+        Task IShopService.SaveShop(AShop shop)
         {
             var checkShop = AllShops.Where(x => x.Id == shop.Id).FirstOrDefault();
 
@@ -44,11 +51,7 @@ namespace APartners.Services
                 checkShop.Name = shop.Name;
                 checkShop.Description = shop.Description;
             }
-        }
-
-        public void DeleteShop(int id)
-        {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

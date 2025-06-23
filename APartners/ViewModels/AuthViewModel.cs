@@ -33,7 +33,7 @@ namespace APartners.ViewModels
         public AuthViewModel() 
         {
             LoginCommand = new AsyncRelayCommand(async x => await LoginAsync());
-
+            Login = "admin@mail.com";
         }
 
         /// <summary>

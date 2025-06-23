@@ -20,21 +20,21 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
+            <UniformGrid Rows="1">
+                <Button Content="Добавить" Command="{Binding AddShopCommand}" FontSize="15" FontWeight="Medium" />
+                <Button Content="Обновить" Command="{Binding UpdateShopsCommand}" FontSize="15" FontWeight="Medium" />
+            </UniformGrid>
 
-            <Button Content="Добавить" Command="{Binding AddShopCommand}" FontSize="15" FontWeight="Medium" />
-            
             <ListBox 
                   Grid.Row="1"
                   ItemsSource="{Binding Shops}"
                   SelectedItem="{Binding SelectedShop}"
-                  BorderThickness="0"   
+                  BorderThickness="0"
                   Background="Transparent"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   HorizontalContentAlignment="Stretch"
                   ItemContainerStyle="{StaticResource AnimatedListBoxItemStyle}"
                   ItemTemplate="{StaticResource ShopItemTemplate}" />
-
-
         </Grid>
 
         <Grid Grid.Column="1">
@@ -44,8 +44,7 @@
                 <RowDefinition Height="2*" />
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
-            
-            
+
             <Label Content="{Binding SelectedShop.Name}" Margin="0, 10, 0, 0" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" />
             <Image Grid.Row="1" Source="https://images.icon-icons.com/403/PNG/512/shop_40505.png" />
             <TextBlock Grid.Row="2" Text="{Binding SelectedShop.Description}"

@@ -6,40 +6,61 @@ using APartners.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace APartners.ViewModels
 {
-    public class ShopsViewModel : ViewModelBase
+    public class ShopsViewModel : INotifyPropertyChanged
     {
         private MainViewModel _mainViewModel;
-        public ObservableCollection<AShop> Shops { get; set; }
+
+        private ObservableCollection<AShop> _shops;
+        public ObservableCollection<AShop> Shops
+        {
+            get => _shops;
+            set
+            {
+                _shops = value;
+                OnPropertyChanged(nameof(Shops));
+            }
+        }
+
+        private AShop _selectedShop;
+        public AShop SelectedShop
+        {
+            get => _selectedShop;
+            set
+            {
+                _selectedShop = value;
+                OnPropertyChanged(nameof(SelectedShop));
+            }
+        }
 
         public ICommand AddShopCommand { get; set; }
         public ICommand EditShopCommand { get; set; }
-
-        public AShop? SelectedShop
-        {
-            get => GetValue<AShop>(nameof(SelectedShop));
-            set => SetValue(value, nameof(SelectedShop));
-        }
+        public ICommand UpdateShopsCommand { get; set; }
 
         public ShopsViewModel() 
         {
             _mainViewModel = DIContainer.GetService<MainViewModel>();
             Shops = new ObservableCollection<AShop>();
-            var shopService = DIContainer.GetService<IShopService>();
             AddShopCommand = new RelayCommand(x => AddShop());
             EditShopCommand = new RelayCommand(x => EditShop());
+            UpdateShopsCommand = new AsyncRelayCommand(async x => await Initial());
+            Initial();
+        }
 
-            if (shopService != null )
-            {
-                Shops = new ObservableCollection<AShop>(shopService.GetShops());
-            }
+        private async Task Initial()
+        {
+            var shopService = DIContainer.GetService<IShopService>();
+            var shops = await shopService.GetShops();
+            Shops = new ObservableCollection<AShop>(shops);
         }
 
         public void AddShop()
@@ -51,6 +72,13 @@ namespace APartners.ViewModels
         {
             _mainViewModel.SelectedUserControl = new AddEditShopView();
             _mainViewModel.SelectedUserControl.DataContext = new AddEditShopViewModel(false, SelectedShop);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }
