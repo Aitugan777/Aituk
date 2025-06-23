@@ -15,5 +15,9 @@ namespace APartners.Services
         /// <param name="token">токен</param>
         /// <returns>магазины</returns>
         List<AShop> GetShops();
+
+        void SaveShop(AShop shop);
+        void AddShop(AShop shop);
+        void DeleteShop(int id);
     }
 }

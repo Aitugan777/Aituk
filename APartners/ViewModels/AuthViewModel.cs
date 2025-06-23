@@ -1,6 +1,7 @@
 ﻿using APartners.Commands;
 using APartners.Models;
 using APartners.Services;
+using APartners.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +52,9 @@ namespace APartners.ViewModels
                         var mainViewModel = DIContainer.GetService<MainViewModel>();
                         if (mainViewModel != null)
                         {
-                            mainViewModel.SelectedUserControl = mainViewModel.ShopsUserControl;
+                            var view = new ShopsView();
+                            view.DataContext = new ShopsViewModel();
+                            mainViewModel.SelectedUserControl = view;
                         }
                     }
                     else
