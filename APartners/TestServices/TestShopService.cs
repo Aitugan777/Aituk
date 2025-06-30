@@ -1,16 +1,21 @@
 ﻿using AitukCore.Models;
+using APartners.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace APartners.Services
+namespace APartners.TestServices
 {
     public class TestShopService : IShopService
     {
         public List<AShop> AllShops { get; set; }
+
+        private long Identety { get; set; }
 
         public TestShopService()
         {
@@ -22,36 +27,59 @@ namespace APartners.Services
                 { ""Id"": 4, ""Name"": ""HomeEssentials"", ""Description"": ""Furniture and kitchenware"", ""PersonId"": 103 },
                 { ""Id"": 5, ""Name"": ""FoodCorner"", ""Description"": ""Groceries and snacks"", ""PersonId"": 104 }
             ]";
+            Identety = 5;
 
             AllShops = JsonConvert.DeserializeObject<List<AShop>>(json)!;
         }
 
-        Task IShopService.AddShop(AShop shop)
-        {
-            AllShops.Add(shop);
-            return Task.CompletedTask;
-        }
-
-        Task IShopService.DeleteShop(int id)
-        {
-            return Task.CompletedTask;
-        }
-
-        Task<List<AShop>> IShopService.GetShops()
+        public Task<List<AShop>> GetShops()
         {
             return Task.FromResult(AllShops);
         }
 
-        Task IShopService.SaveShop(AShop shop)
+        public Task AddShop(AShop shop)
         {
-            var checkShop = AllShops.Where(x => x.Id == shop.Id).FirstOrDefault();
+            shop.Id = ++Identety;
+            AllShops.Add(shop);
+
+            string photoPath = $"{shop.Id}.jpg";
+            if (shop.Photo != null)
+                File.WriteAllBytes(photoPath, shop.Photo.Content);
+
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteShop(long shopId)
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task SaveShop(AShop shop)
+        {
+            var checkShop = AllShops.FirstOrDefault(x => x.Id == shop.Id);
 
             if (checkShop != null)
             {
                 checkShop.Name = shop.Name;
                 checkShop.Description = shop.Description;
+
+                string photoPath = $"{shop.Id}.jpg";
+                if (shop.Photo != null)
+                    File.WriteAllBytes(photoPath, shop.Photo.Content);
             }
             return Task.CompletedTask;
         }
+
+        public Task<byte[]?> GetShopPhotoAsync(long shopId)
+        {
+            string photoPath = $"{shopId}.jpg";
+            if (File.Exists(photoPath))
+            {
+                byte[] bytes = File.ReadAllBytes(photoPath);
+                return Task.FromResult<byte[]?>(bytes);
+            }
+            return Task.FromResult<byte[]?>(null);
+        }
     }
+
 }

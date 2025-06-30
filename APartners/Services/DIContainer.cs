@@ -1,4 +1,5 @@
-﻿using APartners.ViewModels;
+﻿using APartners.TestServices;
+using APartners.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -14,13 +15,39 @@ namespace APartners.Services
 
         public static void ConfigureServices()
         {
-            var apiBaseAddress = new Uri("http://94.41.23.37:5070/");
-
             var services = new ServiceCollection();
 
             services.AddSingleton<MainViewModel>();
+            services.AddSingleton<IDialogService, DialogService>();
 
-            // Регистрируем сервисы только через AddHttpClient
+            //Тестовый режим
+            RegisterTestServices(services);
+
+            //Боевой режим
+            //RegisterReleaseServices(services);
+
+            ServiceProvider = services.BuildServiceProvider();
+        }
+
+        /// <summary>
+        /// Регистрация тестовых сервисов
+        /// </summary>
+        /// <param name="services"></param>
+        private static void RegisterTestServices(ServiceCollection services)
+        {
+            services.AddScoped<IAuthService, TestAuthService>();
+            services.AddScoped<IShopService, TestShopService>();
+            services.AddScoped<IProductService, TestProductService>();
+        }
+
+        /// <summary>
+        /// Регистрация боевых сервисов
+        /// </summary>
+        /// <param name="services"></param>
+        private static void RegisterReleaseServices(ServiceCollection services)
+        {
+            var apiBaseAddress = new Uri("http://94.41.23.37:5070/");
+
             services.AddHttpClient<IAuthService, AuthService>(client =>
             {
                 client.BaseAddress = apiBaseAddress;
@@ -30,8 +57,6 @@ namespace APartners.Services
             {
                 client.BaseAddress = apiBaseAddress;
             });
-
-            ServiceProvider = services.BuildServiceProvider();
         }
 
         public static T GetService<T>() => ServiceProvider.GetService<T>();

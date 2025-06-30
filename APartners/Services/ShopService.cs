@@ -44,10 +44,10 @@ namespace APartners.Services
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task DeleteShop(int id)
+        public async Task DeleteShop(long shopId)
         {
             AddAuthHeader();
-            var response = await _httpClient.DeleteAsync($"api/AShop/{id}");
+            var response = await _httpClient.DeleteAsync($"api/AShop/{shopId}");
             response.EnsureSuccessStatusCode();
         }
 
@@ -74,6 +74,16 @@ namespace APartners.Services
                 var error = await response.Content.ReadAsStringAsync();
                 throw new Exception($"Ошибка {response.StatusCode}: {error}");
             }
+        }
+
+        public Task SavePhotoAsync(byte[] photoBytes, long shopId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<byte[]?> GetShopPhotoAsync(long shopId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

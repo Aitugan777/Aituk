@@ -38,5 +38,6 @@ namespace APartners.Models
             OnPropertyChanged(propertyName);
             return true;
         }
+
     }
 }

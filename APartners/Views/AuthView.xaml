@@ -7,10 +7,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="1200">
 
-    <Border VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="200">
+    <Border VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="200" Background="White" Padding="10" CornerRadius="10">
         <StackPanel>
             <Label Content="AITUK" Margin="0, 0, 0, 20" HorizontalAlignment="Center" FontSize="18" FontWeight="SemiBold"/>
-            <TextBox Text="{Binding Login}" />
+            <TextBox Style="{StaticResource OneLine}" Text="{Binding Login}" />
             <Label Content="логин" Foreground="Gray"/>
             <!--PasswordBox нельзя забиндить, поэтому достучаемся до него через имя-->
             <PasswordBox Name="pbx_Password" PasswordChanged="PasswordChanged" />

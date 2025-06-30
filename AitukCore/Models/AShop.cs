@@ -12,7 +12,7 @@ namespace AitukCore.Models
     public class AShop
     {
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -24,12 +24,14 @@ namespace AitukCore.Models
         public double PositionY { get; set; }
 
         [ForeignKey("ASeller")]
-        public int SellerId { get; set; }
+        public long SellerId { get; set; }
 
         [JsonIgnore]
         public ASeller? Seller { get; set; }
 
         [JsonIgnore]
         public List<AProduct>? Products { get; set; }
+
+        public APhoto Photo {  get; set; }
     }
 }

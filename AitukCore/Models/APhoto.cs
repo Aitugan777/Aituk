@@ -15,5 +15,7 @@ namespace AitukCore.Models
         public long ParentId { get; set; }
 
         public EPhotoFor PhotoFor { get; set; }
+
+        public byte[] Content { get; set; }
     }
 }

@@ -9,10 +9,10 @@ namespace APartners.Services
 {
     public interface IShopService
     {
-        Task AddShop(AShop shop);
-        Task DeleteShop(int id);
         Task<List<AShop>> GetShops();
+        Task AddShop(AShop shop);
+        Task DeleteShop(long shopId);
         Task SaveShop(AShop shop);
+        Task<byte[]?> GetShopPhotoAsync(long shopId);
     }
-
 }

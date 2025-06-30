@@ -7,16 +7,19 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace APartners.ViewModels
 {
-    public class ShopsViewModel : INotifyPropertyChanged
+    public class ShopsViewModel : ViewModelBase
     {
         private MainViewModel _mainViewModel;
 
@@ -39,6 +42,18 @@ namespace APartners.ViewModels
             {
                 _selectedShop = value;
                 OnPropertyChanged(nameof(SelectedShop));
+                LoadShopPhoto();
+            }
+        }
+
+        private ImageSource _shopImage;
+        public ImageSource ShopImage
+        {
+            get => _shopImage;
+            set
+            {
+                _shopImage = value;
+                OnPropertyChanged(nameof(ShopImage));
             }
         }
 
@@ -74,11 +89,29 @@ namespace APartners.ViewModels
             _mainViewModel.SelectedUserControl.DataContext = new AddEditShopViewModel(false, SelectedShop);
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string name)
+        private async void LoadShopPhoto()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            if (SelectedShop != null)
+            {
+                var shopService = DIContainer.GetService<IShopService>();
+                var content = await shopService.GetShopPhotoAsync(SelectedShop.Id);
+                if (content != null)
+                    ShopImage = LoadImage((byte[])content);
+                else
+                    ShopImage = null;
+            }
+        }
+
+        private ImageSource LoadImage(byte[] bytes)
+        {
+            using var stream = new MemoryStream(bytes);
+            var image = new BitmapImage();
+            image.BeginInit();
+            image.StreamSource = stream;
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.EndInit();
+            image.Freeze();
+            return image;
         }
     }
 }
