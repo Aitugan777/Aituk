@@ -96,22 +96,11 @@ namespace APartners.ViewModels
                 var shopService = DIContainer.GetService<IShopService>();
                 var content = await shopService.GetShopPhotoAsync(SelectedShop.Id);
                 if (content != null)
-                    ShopImage = LoadImage((byte[])content);
+                    ShopImage = content;
                 else
                     ShopImage = null;
             }
         }
 
-        private ImageSource LoadImage(byte[] bytes)
-        {
-            using var stream = new MemoryStream(bytes);
-            var image = new BitmapImage();
-            image.BeginInit();
-            image.StreamSource = stream;
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.EndInit();
-            image.Freeze();
-            return image;
-        }
     }
 }

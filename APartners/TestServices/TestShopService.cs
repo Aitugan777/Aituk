@@ -8,6 +8,7 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace APartners.TestServices
 {
@@ -70,15 +71,15 @@ namespace APartners.TestServices
             return Task.CompletedTask;
         }
 
-        public Task<byte[]?> GetShopPhotoAsync(long shopId)
+        public Task<ImageSource> GetShopPhotoAsync(long shopId)
         {
             string photoPath = $"{shopId}.jpg";
             if (File.Exists(photoPath))
             {
                 byte[] bytes = File.ReadAllBytes(photoPath);
-                return Task.FromResult<byte[]?>(bytes);
+                return Task.FromResult<ImageSource>(FileHelper.LoadImage(bytes));
             }
-            return Task.FromResult<byte[]?>(null);
+            return Task.FromResult<ImageSource>(null);
         }
     }
 

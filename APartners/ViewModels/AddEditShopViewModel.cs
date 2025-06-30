@@ -71,9 +71,8 @@ namespace APartners.ViewModels
 
         private async Task UpdateImageAsync()
         {
-            var dialogService = DIContainer.GetService<IDialogService>();
 
-            var path = dialogService.OpenImageFileDialog();
+            var path = FileHelper.OpenImageFileDialog();
             if (string.IsNullOrEmpty(path)) return;
 
             byte[] imageBytes = File.ReadAllBytes(path);
@@ -97,10 +96,10 @@ namespace APartners.ViewModels
         private async Task LoadImageAsync(long shopId)
         {
             var shopService = DIContainer.GetService<IShopService>();
-            var imageBytes = await shopService.GetShopPhotoAsync(shopId);
-            if (imageBytes != null)
+            var photo = await shopService.GetShopPhotoAsync(shopId);
+            if (photo != null)
             {
-                ShopImage = LoadImage(imageBytes);
+                ShopImage = photo;
             }
         }
 

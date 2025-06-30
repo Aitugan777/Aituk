@@ -30,5 +30,7 @@ namespace AitukCore.Models
         public AShop? Shop { get; set; }
 
         public int CategoryId { get; set; }
+
+        public List<APhoto> Photos { get; set; }
     }
 }
