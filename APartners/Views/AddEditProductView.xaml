@@ -20,8 +20,20 @@
                     <RowDefinition  />
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
+                
+                <ItemsControl ItemsSource="{Binding ProductImages}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding}" Width="100" Height="100" Margin="5"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-                <Image Source="{Binding ProductImage}" />
                 <Button Grid.Row="1" Content="Заменить фотографию" Command="{Binding UpdateImageCommand}" />
             </Grid>
         </Border>

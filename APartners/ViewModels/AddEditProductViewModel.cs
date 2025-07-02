@@ -5,6 +5,7 @@ using APartners.Services;
 using APartners.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ namespace APartners.ViewModels
         /// <summary>
         /// Признак добавления магазина
         /// </summary>
-        private bool _isAddProduct { get; set; }
+        private bool _isAddProduct;
 
         /// <summary>
         /// Команда для добавления/сохранения 
@@ -41,16 +42,8 @@ namespace APartners.ViewModels
             set => SetValue(value, nameof(Product));
         }
 
-        private ImageSource _productImage;
-        public ImageSource ProductImage
-        {
-            get => _productImage;
-            set
-            {
-                _productImage = value;
-                OnPropertyChanged(nameof(ProductImage));
-            }
-        }
+        public ObservableCollection<ImageSource> ProductImages { get; set; }
+        
 
         /// <summary>
         /// конструктор
@@ -59,6 +52,7 @@ namespace APartners.ViewModels
         /// <param name="shop">магазин</param>
         public AddEditProductViewModel(bool isAddProduct, AProduct product)
         {
+            ProductImages = new ObservableCollection<ImageSource>();
             _isAddProduct = isAddProduct;
             SaveCommand = new AsyncRelayCommand(async x => await SaveAsync());
 
@@ -71,35 +65,41 @@ namespace APartners.ViewModels
 
         private async Task UpdateImageAsync()
         {
+            var paths = FileHelper.OpenMultipleImageFileDialog();
+            if (paths == null || paths.Length == 0) return;
 
-            var path = FileHelper.OpenImageFileDialog();
-            if (string.IsNullOrEmpty(path)) return;
-
-            byte[] imageBytes = File.ReadAllBytes(path);
             if (Product != null)
             {
                 if (Product.Photos == null)
+                    Product.Photos = new List<APhoto>();
+
+                if (ProductImages == null)
+                    ProductImages = new ObservableCollection<ImageSource>();
+
+                foreach (var path in paths)
                 {
-                    Product.Photos = new APhoto()
+                    byte[] imageBytes = File.ReadAllBytes(path);
+
+                    var photo = new APhoto
                     {
                         Content = imageBytes,
                         ParentId = Product.Id,
                         PhotoFor = EPhotoFor.Product
                     };
+
+                    Product.Photos.Add(photo);
+                    ProductImages.Add(LoadImage(imageBytes));
                 }
-                else
-                    Product.Photos.Content = imageBytes;
-                ProductImage = LoadImage(imageBytes);
             }
         }
 
         private async Task LoadImageAsync(long productId)
         {
             var productService = DIContainer.GetService<IProductService>();
-            var photo = await productService.GetProductPhotosAsync(productId);
-            if (photo != null)
+            var photos = await productService.GetProductPhotosAsync(productId);
+            if (photos != null)
             {
-                ProductImage = photo;
+                ProductImages = new ObservableCollection<ImageSource>(photos);
             }
         }
 

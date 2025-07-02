@@ -13,7 +13,7 @@ namespace APartners.TestServices
     public class TestProductService : IProductService
     {
         private List<AProduct> _products;
-        private int _identity;
+        private long _identity;
 
         public TestProductService()
         {
@@ -25,9 +25,10 @@ namespace APartners.TestServices
             _identity = _products.Max(p => p.Id);
         }
 
-        public Task<List<AProduct>> GetProducts()
+        public Task<List<AProduct>> GetProductsAsync(long shopId)
         {
-            return Task.FromResult(_products);
+            var products = _products.Where(x => x.ShopId == shopId).ToList();
+            return Task.FromResult(products);
         }
 
         public Task AddProduct(AProduct product)
@@ -63,7 +64,7 @@ namespace APartners.TestServices
             return Task.CompletedTask;
         }
 
-        public Task DeleteProduct(int productId)
+        public Task DeleteProduct(long productId)
         {
             var product = _products.FirstOrDefault(p => p.Id == productId);
             if (product != null)
@@ -74,7 +75,7 @@ namespace APartners.TestServices
             return Task.CompletedTask;
         }
 
-        public Task<List<ImageSource>> GetProductPhotosAsync(int productId)
+        public Task<List<ImageSource>> GetProductPhotosAsync(long productId)
         {
             var photos = new List<ImageSource>();
             var files = Directory.GetFiles(Directory.GetCurrentDirectory(), $"{productId}_product_*.jpg");
@@ -88,7 +89,7 @@ namespace APartners.TestServices
         }
 
 
-        private void SaveProductPhotos(int productId, List<APhoto> photos)
+        private void SaveProductPhotos(long productId, List<APhoto> photos)
         {
             //DeleteProductPhotos(productId); // удалить старые фото
 
@@ -99,7 +100,7 @@ namespace APartners.TestServices
             }
         }
 
-        private void DeleteProductPhotos(int productId)
+        private void DeleteProductPhotos(long productId)
         {
             var files = Directory.GetFiles(Directory.GetCurrentDirectory(), $"{productId}_product_*.jpg");
             foreach (var file in files)

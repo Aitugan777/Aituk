@@ -55,6 +55,7 @@ namespace APartners.ViewModels
                 _selectedShop = value;
                 OnPropertyChanged(nameof(SelectedShop));
                 LoadShopPhoto();
+                LoadProducts();
             }
         }
 
@@ -119,7 +120,7 @@ namespace APartners.ViewModels
         public void AddProduct()
         {
             _mainViewModel.SelectedUserControl = new AddEditProductView();
-            _mainViewModel.SelectedUserControl.DataContext = new AddEditProductViewModel(true, new AProduct());
+            _mainViewModel.SelectedUserControl.DataContext = new AddEditProductViewModel(true, new AProduct() { ShopId = SelectedShop.Id});
         }
 
         public void EditProduct()
@@ -128,7 +129,7 @@ namespace APartners.ViewModels
             _mainViewModel.SelectedUserControl.DataContext = new AddEditProductViewModel(false, SelectedProduct);
         }
 
-        private async void LoadShopPhoto()
+        private async Task LoadShopPhoto()
         {
             if (SelectedShop != null)
             {
@@ -138,6 +139,18 @@ namespace APartners.ViewModels
                     ShopImage = content;
                 else
                     ShopImage = null;
+            }
+        }
+
+
+        private async Task LoadProducts()
+        {
+
+            if (SelectedShop != null)
+            {
+                var productService = DIContainer.GetService<IProductService>();
+                var products = await productService.GetProductsAsync(SelectedShop.Id);
+                Products = new ObservableCollection<AProduct>(products);
             }
         }
 

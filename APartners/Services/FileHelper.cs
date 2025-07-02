@@ -27,6 +27,20 @@ namespace APartners.Services
         }
 
         /// <summary>
+        /// Получить пути к выбранным изображениям
+        /// </summary>
+        /// <returns>Массив путей к изображениям или null</returns>
+        public static string[] OpenMultipleImageFileDialog()
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Image Files (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp",
+                Multiselect = true
+            };
+
+            return dialog.ShowDialog() == true ? dialog.FileNames : null;
+        }
+        /// <summary>
         /// Узнать формат изображения
         /// </summary>
         /// <param name="bytes"></param>

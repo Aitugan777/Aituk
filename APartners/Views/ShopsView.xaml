@@ -60,15 +60,15 @@
             </Button>
 
             <ListBox 
-          Grid.Row="2"
-          ItemsSource="{Binding Products}"
-          SelectedItem="{Binding SelectedProduct}"
-          BorderThickness="0"
-          Background="Transparent"
-          ScrollViewer.VerticalScrollBarVisibility="Auto"
-          HorizontalContentAlignment="Stretch"
-          ItemContainerStyle="{StaticResource AnimatedListBoxItemStyle}"
-          ItemTemplate="{StaticResource ProductItemTemplate}" />
+                  Grid.Row="2"
+                  ItemsSource="{Binding Products}"
+                  SelectedItem="{Binding SelectedProduct}"
+                  BorderThickness="0"
+                  Background="Transparent"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  HorizontalContentAlignment="Stretch"
+                  ItemContainerStyle="{StaticResource AnimatedListBoxItemStyle}"
+                  ItemTemplate="{StaticResource ProductItemTemplate}" />
 
             <Button Content="Добавить товар" Command="{Binding AddProductCommand}" FontSize="12" FontWeight="Medium" HorizontalAlignment="Left" Margin="10"/>
         </Grid>
