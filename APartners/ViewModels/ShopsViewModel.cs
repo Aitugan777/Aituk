@@ -24,6 +24,7 @@ namespace APartners.ViewModels
         private MainViewModel _mainViewModel;
 
         private ObservableCollection<AShop> _shops;
+        private ObservableCollection<AProduct> _products;
         public ObservableCollection<AShop> Shops
         {
             get => _shops;
@@ -34,7 +35,18 @@ namespace APartners.ViewModels
             }
         }
 
+        public ObservableCollection<AProduct> Products
+        {
+            get => _products;
+            set
+            {
+                _products = value;
+                OnPropertyChanged(nameof(Products));
+            }
+        }
+
         private AShop _selectedShop;
+        private AProduct _selectedProduct; 
         public AShop SelectedShop
         {
             get => _selectedShop;
@@ -43,6 +55,16 @@ namespace APartners.ViewModels
                 _selectedShop = value;
                 OnPropertyChanged(nameof(SelectedShop));
                 LoadShopPhoto();
+            }
+        }
+
+        public AProduct SelectedProduct
+        {
+            get => _selectedProduct;
+            set
+            {
+                _selectedProduct = value;
+                OnPropertyChanged(nameof(SelectedProduct));
             }
         }
 
@@ -59,14 +81,19 @@ namespace APartners.ViewModels
 
         public ICommand AddShopCommand { get; set; }
         public ICommand EditShopCommand { get; set; }
+        public ICommand AddProductCommand { get; set; }
+        public ICommand EditProductCommand { get; set; }
         public ICommand UpdateShopsCommand { get; set; }
 
         public ShopsViewModel() 
         {
             _mainViewModel = DIContainer.GetService<MainViewModel>();
             Shops = new ObservableCollection<AShop>();
+            Products = new ObservableCollection<AProduct>();
             AddShopCommand = new RelayCommand(x => AddShop());
             EditShopCommand = new RelayCommand(x => EditShop());
+            AddProductCommand = new RelayCommand(x => AddProduct());
+            EditProductCommand = new RelayCommand(x => EditProduct());
             UpdateShopsCommand = new AsyncRelayCommand(async x => await Initial());
             Initial();
         }
@@ -87,6 +114,18 @@ namespace APartners.ViewModels
         {
             _mainViewModel.SelectedUserControl = new AddEditShopView();
             _mainViewModel.SelectedUserControl.DataContext = new AddEditShopViewModel(false, SelectedShop);
+        }
+
+        public void AddProduct()
+        {
+            _mainViewModel.SelectedUserControl = new AddEditProductView();
+            _mainViewModel.SelectedUserControl.DataContext = new AddEditProductViewModel(true, new AProduct());
+        }
+
+        public void EditProduct()
+        {
+            _mainViewModel.SelectedUserControl = new AddEditProductView();
+            _mainViewModel.SelectedUserControl.DataContext = new AddEditProductViewModel(false, SelectedProduct);
         }
 
         private async void LoadShopPhoto()

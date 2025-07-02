@@ -58,6 +58,19 @@
             <Button Command="{Binding EditShopCommand}" FontSize="12" FontWeight="Medium" HorizontalAlignment="Right" Margin="10">
                 <Image Source="https://images.icon-icons.com/4038/PNG/512/text_pen_pencil_writing_edit_write_icon_256731.png" />
             </Button>
+
+            <ListBox 
+          Grid.Row="2"
+          ItemsSource="{Binding Products}"
+          SelectedItem="{Binding SelectedProduct}"
+          BorderThickness="0"
+          Background="Transparent"
+          ScrollViewer.VerticalScrollBarVisibility="Auto"
+          HorizontalContentAlignment="Stretch"
+          ItemContainerStyle="{StaticResource AnimatedListBoxItemStyle}"
+          ItemTemplate="{StaticResource ProductItemTemplate}" />
+
+            <Button Content="Добавить товар" Command="{Binding AddProductCommand}" FontSize="12" FontWeight="Medium" HorizontalAlignment="Left" Margin="10"/>
         </Grid>
 
     </Grid>

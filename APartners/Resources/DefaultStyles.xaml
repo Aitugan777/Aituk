@@ -161,4 +161,35 @@
         </StackPanel>
     </DataTemplate>
 
+    <DataTemplate x:Key="ProductItemTemplate">
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Информация о товаре -->
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="14"/>
+                <TextBlock Text="{Binding Price, StringFormat='Цена: {0:C}'}" FontSize="12" />
+            </StackPanel>
+
+            <!-- Кнопка редактирования с иконкой -->
+            <Button Grid.Column="1"
+                Width="30"
+                Height="30"
+                Margin="10,0,0,0"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                BorderThickness="0"
+                ToolTip="Редактировать"
+                Command="{Binding DataContext.EditProductCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                CommandParameter="{Binding}">
+                <Image Source="https://images.icon-icons.com/4038/PNG/512/text_pen_pencil_writing_edit_write_icon_256731.png"
+                   Width="16"
+                   Height="16" />
+            </Button>
+        </Grid>
+    </DataTemplate>
+
 </ResourceDictionary>
