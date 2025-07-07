@@ -22,7 +22,7 @@ namespace APartners
         {
             InitializeComponent();
 
-            DataContext = DIContainer.GetService<MainViewModel>();
+            DataContext = DIContainer.GetService<MainWindowViewModel>();
         }
     }
 }

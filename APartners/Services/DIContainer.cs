@@ -17,7 +17,7 @@ namespace APartners.Services
         {
             var services = new ServiceCollection();
 
-            services.AddSingleton<MainViewModel>();
+            services.AddSingleton<MainWindowViewModel>();
 
             //Тестовый режим
             RegisterTestServices(services);

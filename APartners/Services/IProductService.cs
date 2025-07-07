@@ -10,7 +10,8 @@ namespace APartners.Services
 {
     public interface IProductService
     {
-        Task<List<AProduct>> GetProductsAsync(long shopId);
+        Task<List<AProduct>> GetProductsAsync(AProductFilter filter);
+        Task<List<AProduct>> GetProductsAsync();
         Task AddProduct(AProduct product);
         Task SaveProduct(AProduct product);
         Task DeleteProduct(long productId);

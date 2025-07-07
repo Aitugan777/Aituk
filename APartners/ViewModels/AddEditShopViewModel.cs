@@ -132,7 +132,7 @@ namespace APartners.ViewModels
                 shopService.SaveShop(Shop!);
             }
 
-            var mainViewModel = DIContainer.GetService<MainViewModel>();
+            var mainViewModel = DIContainer.GetService<MainWindowViewModel>();
             mainViewModel.SelectedUserControl = new ShopsView();
             mainViewModel.SelectedUserControl.DataContext = new ShopsViewModel();
         }

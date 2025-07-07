@@ -27,6 +27,17 @@ namespace APartners.ViewModels
         /// </summary>
         private bool _isAddProduct;
 
+        private ObservableCollection<AShop> _shops;
+        public ObservableCollection<AShop> Shops
+        {
+            get => _shops;
+            set
+            {
+                _shops = value;
+                OnPropertyChanged(nameof(Shops));
+            }
+        }
+
         /// <summary>
         /// Команда для добавления/сохранения 
         /// </summary>
@@ -41,6 +52,21 @@ namespace APartners.ViewModels
             get => GetValue<AProduct>(nameof(Product));
             set => SetValue(value, nameof(Product));
         }
+
+        private ImageSource _selectedImage;
+        public ImageSource SelectedImage
+        {
+            get => _selectedImage;
+            set
+            {
+                _selectedImage = value;
+                OnPropertyChanged(nameof(SelectedImage));
+                OnPropertyChanged(nameof(IsImageSelected));
+            }
+        }
+        public bool IsImageSelected => SelectedImage != null;
+
+        public ICommand DeleteImageCommand { get; }
 
         public ObservableCollection<ImageSource> ProductImages { get; set; }
         
@@ -57,10 +83,46 @@ namespace APartners.ViewModels
             SaveCommand = new AsyncRelayCommand(async x => await SaveAsync());
 
             UpdateImageCommand = new RelayCommand(async x => await UpdateImageAsync());
+
             if (!isAddProduct)
                 LoadImageAsync(product.Id);
 
             Product = product;
+
+            InitialAsync();
+        }
+
+        public async Task InitialAsync()
+        {
+            var shopService = DIContainer.GetService<IShopService>();
+            Shops = new ObservableCollection<AShop>(await shopService.GetShops());
+        }
+
+        private void DeleteImage()
+        {
+            if (SelectedImage != null)
+            {
+                ProductImages.Remove(SelectedImage);
+                // Также удалить из Product.Photos, если есть связь
+                var imageBytes = ImageSourceToByteArray(SelectedImage);
+                var photoToRemove = Product.Photos.FirstOrDefault(p => p.Content.SequenceEqual(imageBytes));
+                if (photoToRemove != null)
+                    Product.Photos.Remove(photoToRemove);
+
+                SelectedImage = null;
+            }
+        }
+        private byte[] ImageSourceToByteArray(ImageSource imageSource)
+        {
+            if (imageSource is BitmapSource bitmapSource)
+            {
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
+                using var stream = new MemoryStream();
+                encoder.Save(stream);
+                return stream.ToArray();
+            }
+            return null;
         }
 
         private async Task UpdateImageAsync()
@@ -132,7 +194,7 @@ namespace APartners.ViewModels
                 productService.SaveProduct(Product!);
             }
 
-            var mainViewModel = DIContainer.GetService<MainViewModel>();
+            var mainViewModel = DIContainer.GetService<MainWindowViewModel>();
             mainViewModel.SelectedUserControl = new ShopsView();
             mainViewModel.SelectedUserControl.DataContext = new ShopsViewModel();
         }

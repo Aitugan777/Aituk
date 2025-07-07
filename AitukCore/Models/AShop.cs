@@ -33,5 +33,8 @@ namespace AitukCore.Models
         public List<AProduct>? Products { get; set; }
 
         public APhoto Photo {  get; set; }
+
+        [JsonIgnore]
+        public bool IsChecked { get; set; }
     }
 }

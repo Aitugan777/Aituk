@@ -49,11 +49,11 @@ namespace APartners.ViewModels
                 {
                     if (await authService.Authorize(Login, Password))
                     {
-                        var mainViewModel = DIContainer.GetService<MainViewModel>();
+                        var mainViewModel = DIContainer.GetService<MainWindowViewModel>();
                         if (mainViewModel != null)
                         {
-                            var view = new ShopsView();
-                            view.DataContext = new ShopsViewModel();
+                            var view = new MainView();
+                            view.DataContext = new MainViewModel();
                             mainViewModel.SelectedUserControl = view;
                         }
                     }

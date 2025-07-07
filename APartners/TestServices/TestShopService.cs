@@ -82,5 +82,4 @@ namespace APartners.TestServices
             return Task.FromResult<ImageSource>(null);
         }
     }
-
 }

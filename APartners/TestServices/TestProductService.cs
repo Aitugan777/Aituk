@@ -25,12 +25,6 @@ namespace APartners.TestServices
             _identity = _products.Max(p => p.Id);
         }
 
-        public Task<List<AProduct>> GetProductsAsync(long shopId)
-        {
-            var products = _products.Where(x => x.ShopId == shopId).ToList();
-            return Task.FromResult(products);
-        }
-
         public Task AddProduct(AProduct product)
         {
             product.Id = ++_identity;
@@ -107,6 +101,17 @@ namespace APartners.TestServices
             {
                 File.Delete(file);
             }
+        }
+
+        public Task<List<AProduct>> GetProductsAsync(AProductFilter filter)
+        {
+            var products = _products.Where(x => x.ShopId == filter.ShopId).ToList();
+            return Task.FromResult(products);
+        }
+
+        public Task<List<AProduct>> GetProductsAsync()
+        {
+            return Task.FromResult(_products);
         }
     }
 

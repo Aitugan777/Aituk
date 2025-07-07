@@ -21,7 +21,7 @@ namespace APartners.ViewModels
 {
     public class ShopsViewModel : ViewModelBase
     {
-        private MainViewModel _mainViewModel;
+        private MainWindowViewModel _mainViewModel;
 
         private ObservableCollection<AShop> _shops;
         private ObservableCollection<AProduct> _products;
@@ -88,7 +88,7 @@ namespace APartners.ViewModels
 
         public ShopsViewModel() 
         {
-            _mainViewModel = DIContainer.GetService<MainViewModel>();
+            _mainViewModel = DIContainer.GetService<MainWindowViewModel>();
             Shops = new ObservableCollection<AShop>();
             Products = new ObservableCollection<AProduct>();
             AddShopCommand = new RelayCommand(x => AddShop());
@@ -145,11 +145,10 @@ namespace APartners.ViewModels
 
         private async Task LoadProducts()
         {
-
             if (SelectedShop != null)
             {
                 var productService = DIContainer.GetService<IProductService>();
-                var products = await productService.GetProductsAsync(SelectedShop.Id);
+                var products = await productService.GetProductsAsync();
                 Products = new ObservableCollection<AProduct>(products);
             }
         }

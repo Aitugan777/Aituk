@@ -13,7 +13,45 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Icons\product.png" />
+    <None Remove="Resources\Icons\product60.png" />
+    <None Remove="Resources\Icons\settings.png" />
+    <None Remove="Resources\Icons\settings48.png" />
+    <None Remove="Resources\Icons\settings72.png" />
+    <None Remove="Resources\Icons\store.png" />
+    <None Remove="Resources\Icons\store48.png" />
+    <None Remove="Resources\Icons\store50.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Remove="Views\UserControl1.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Icons\product.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icons\product60.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icons\settings.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icons\settings48.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icons\settings72.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icons\store.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icons\store48.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Icons\store50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
