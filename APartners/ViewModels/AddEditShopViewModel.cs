@@ -1,10 +1,11 @@
-﻿using AitukCore.Models;
+﻿using AitukCore.Contracts;
 using APartners.Commands;
 using APartners.Models;
 using APartners.Services;
 using APartners.Views;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -41,15 +42,13 @@ namespace APartners.ViewModels
             set => SetValue(value, nameof(Shop));
         }
 
-        private ImageSource _shopImage;
-        public ImageSource ShopImage
+        /// <summary>
+        /// Текущий магазин
+        /// </summary>
+        public ImageSource? SelectedImage
         {
-            get => _shopImage;
-            set
-            {
-                _shopImage = value;
-                OnPropertyChanged(nameof(ShopImage));
-            }
+            get => GetValue<ImageSource>(nameof(SelectedImage));
+            set => SetValue(value, nameof(SelectedImage));
         }
 
         /// <summary>
@@ -60,59 +59,29 @@ namespace APartners.ViewModels
         public AddEditShopViewModel(bool isAddShop, AShop shop) 
         {
             _isAddShop = isAddShop;
-            SaveCommand = new AsyncRelayCommand(async x => await SaveAsync());
-
-            UpdateImageCommand = new RelayCommand(async x => await UpdateImageAsync());
-            if (!isAddShop)
-                LoadImageAsync(shop.Id);
-
             Shop = shop;
+
+            SaveCommand = new AsyncRelayCommand(async x => await SaveAsync());
+            UpdateImageCommand = new RelayCommand(x => UpdateImage());
         }
 
-        private async Task UpdateImageAsync()
+        private void UpdateImage()
         {
+            var paths = FileHelper.OpenMultipleImageFileDialog();
+            if (paths == null || paths.Length == 0) return;
 
-            var path = FileHelper.OpenImageFileDialog();
-            if (string.IsNullOrEmpty(path)) return;
-
-            byte[] imageBytes = File.ReadAllBytes(path);
             if (Shop != null)
             {
-                if (Shop.Photo == null)
+                if (Shop.Photos == null)
+                    Shop.Photos = new ObservableCollection<ImageSource>();
+
+                foreach (var path in paths)
                 {
-                    Shop.Photo = new APhoto()
-                    {
-                        Content = imageBytes,
-                        ParentId = Shop.Id,
-                        PhotoFor = EPhotoFor.Shop
-                    };
+                    byte[] imageBytes = File.ReadAllBytes(path);
+
+                    Shop.Photos.Add(imageBytes.ConvertToImageSource());
                 }
-                else
-                    Shop.Photo.Content = imageBytes;
-                ShopImage = LoadImage(imageBytes);
             }
-        }
-
-        private async Task LoadImageAsync(long shopId)
-        {
-            var shopService = DIContainer.GetService<IShopService>();
-            var photo = await shopService.GetShopPhotoAsync(shopId);
-            if (photo != null)
-            {
-                ShopImage = photo;
-            }
-        }
-
-        private ImageSource LoadImage(byte[] bytes)
-        {
-            using var stream = new MemoryStream(bytes);
-            var image = new BitmapImage();
-            image.BeginInit();
-            image.StreamSource = stream;
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.EndInit();
-            image.Freeze();
-            return image;
         }
 
         /// <summary>
@@ -121,20 +90,25 @@ namespace APartners.ViewModels
         /// <returns></returns>
         public async Task SaveAsync()
         {
-            await Task.Delay(1000);
-            var shopService = DIContainer.GetService<IShopService>();
-            if (_isAddShop)
+            using (new WaitIndicator("Сохранение магазина..."))
             {
-                shopService.AddShop(Shop!);
-            }
-            else
-            {
-                shopService.SaveShop(Shop!);
+                var shopService = DIContainer.GetService<IShopService>();
+                if (_isAddShop)
+                {
+                    await shopService.AddShop(Shop!);
+                }
+                else
+                {
+                    await shopService.SaveShop(Shop!);
+                }
+
             }
 
             var mainViewModel = DIContainer.GetService<MainWindowViewModel>();
-            mainViewModel.SelectedUserControl = new ShopsView();
-            mainViewModel.SelectedUserControl.DataContext = new ShopsViewModel();
+
+            var view = new MainView();
+            view.DataContext = new MainViewModel();
+            mainViewModel.SelectedUserControl = view;
         }
     }
 }

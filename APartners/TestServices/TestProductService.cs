@@ -1,4 +1,4 @@
-﻿using AitukCore.Models;
+﻿using APartners.Models;
 using APartners.Services;
 using System;
 using System.Collections.Generic;
@@ -19,10 +19,10 @@ namespace APartners.TestServices
         {
             _products = new List<AProduct>
             {
-                new AProduct { Id = 1, Name = "Laptop", Description = "Gaming laptop", Cost = 1200.0m, Count = 10, ShopId = 1, CategoryId = 1 },
-                new AProduct { Id = 2, Name = "Book", Description = "Science fiction novel", Cost = 15.0m, Count = 200, ShopId = 2, CategoryId = 2 }
+                new AProduct { Id = 1, Name = "Laptop", Description = "Gaming laptop", Cost = 1200.0m, },
+                new AProduct { Id = 2, Name = "Book", Description = "Science fiction novel", Cost = 15.0m, }
             };
-            _identity = _products.Max(p => p.Id);
+            _identity = _products.Max(p => (long)p.Id);
         }
 
         public Task AddProduct(AProduct product)
@@ -32,7 +32,7 @@ namespace APartners.TestServices
 
             if (product.Photos != null)
             {
-                SaveProductPhotos(product.Id, product.Photos);
+                //SaveProductPhotos((long)product.Id, product.Photos);
             }
 
             return Task.CompletedTask;
@@ -46,13 +46,10 @@ namespace APartners.TestServices
                 existing.Name = product.Name;
                 existing.Description = product.Description;
                 existing.Cost = product.Cost;
-                existing.Count = product.Count;
-                existing.ShopId = product.ShopId;
-                existing.CategoryId = product.CategoryId;
 
                 if (product.Photos != null)
                 {
-                    SaveProductPhotos(product.Id, product.Photos);
+                    //SaveProductPhotos(product.Id, product.Photos);
                 }
             }
             return Task.CompletedTask;
@@ -83,16 +80,6 @@ namespace APartners.TestServices
         }
 
 
-        private void SaveProductPhotos(long productId, List<APhoto> photos)
-        {
-            //DeleteProductPhotos(productId); // удалить старые фото
-
-            for (int i = 0; i < photos.Count; i++)
-            {
-                string filePath = $"{productId}_product_{i}.{FileHelper.GetImageFormat(photos[i].Content)}";
-                File.WriteAllBytes(filePath, photos[i].Content);
-            }
-        }
 
         private void DeleteProductPhotos(long productId)
         {
@@ -103,15 +90,17 @@ namespace APartners.TestServices
             }
         }
 
-        public Task<List<AProduct>> GetProductsAsync(AProductFilter filter)
-        {
-            var products = _products.Where(x => x.ShopId == filter.ShopId).ToList();
-            return Task.FromResult(products);
-        }
 
         public Task<List<AProduct>> GetProductsAsync()
         {
             return Task.FromResult(_products);
+        }
+
+        public async Task<AProduct?> GetProductAsync(long productId)
+        {
+            var product = _products.FirstOrDefault(x => x.Id == productId);
+            product.Shops = new System.Collections.ObjectModel.ObservableCollection<AShop>( await DIContainer.GetService<IShopService>().GetShops());
+            return product;
         }
     }
 

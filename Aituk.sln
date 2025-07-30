@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AitukCore", "AitukCore\Aitu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "APartners", "APartners\APartners.csproj", "{886688B0-4045-47CB-AFEE-EFD43A926997}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AitukServer", "..\..\source\repos\HaveServer\HaveServer\AitukServer.csproj", "{B5A225A0-3BD0-4FFA-935E-91F4F45C820B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{886688B0-4045-47CB-AFEE-EFD43A926997}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{886688B0-4045-47CB-AFEE-EFD43A926997}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{886688B0-4045-47CB-AFEE-EFD43A926997}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5A225A0-3BD0-4FFA-935E-91F4F45C820B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5A225A0-3BD0-4FFA-935E-91F4F45C820B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5A225A0-3BD0-4FFA-935E-91F4F45C820B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5A225A0-3BD0-4FFA-935E-91F4F45C820B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

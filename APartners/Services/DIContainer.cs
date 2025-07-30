@@ -20,10 +20,10 @@ namespace APartners.Services
             services.AddSingleton<MainWindowViewModel>();
 
             //Тестовый режим
-            RegisterTestServices(services);
+            //RegisterTestServices(services);
 
             //Боевой режим
-            //RegisterReleaseServices(services);
+            RegisterReleaseServices(services);
 
             ServiceProvider = services.BuildServiceProvider();
         }
@@ -37,6 +37,7 @@ namespace APartners.Services
             services.AddScoped<IAuthService, TestAuthService>();
             services.AddScoped<IShopService, TestShopService>();
             services.AddScoped<IProductService, TestProductService>();
+            services.AddScoped<IClothPropertiesService, TestClothPropertiesService>();
         }
 
         /// <summary>
@@ -53,6 +54,16 @@ namespace APartners.Services
             });
 
             services.AddHttpClient<IShopService, ShopService>(client =>
+            {
+                client.BaseAddress = apiBaseAddress;
+            });
+
+            services.AddHttpClient<IProductService, ProductService>(client =>
+            {
+                client.BaseAddress = apiBaseAddress;
+            });
+
+            services.AddHttpClient<IClothPropertiesService, ClothPropertiesService>(client =>
             {
                 client.BaseAddress = apiBaseAddress;
             });

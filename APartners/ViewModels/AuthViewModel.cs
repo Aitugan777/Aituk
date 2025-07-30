@@ -33,7 +33,7 @@ namespace APartners.ViewModels
         public AuthViewModel() 
         {
             LoginCommand = new AsyncRelayCommand(async x => await LoginAsync());
-            Login = "admin@mail.com";
+            Login = "admin@.ru";
         }
 
         /// <summary>
@@ -47,19 +47,22 @@ namespace APartners.ViewModels
             {
                 if (Login != null && Password != null)
                 {
-                    if (await authService.Authorize(Login, Password))
+                    using (new WaitIndicator("Авторизация..."))
                     {
-                        var mainViewModel = DIContainer.GetService<MainWindowViewModel>();
-                        if (mainViewModel != null)
+                        if (await authService.Authorize(Login, Password))
                         {
-                            var view = new MainView();
-                            view.DataContext = new MainViewModel();
-                            mainViewModel.SelectedUserControl = view;
+                            var mainViewModel = DIContainer.GetService<MainWindowViewModel>();
+                            if (mainViewModel != null)
+                            {
+                                var view = new MainView();
+                                view.DataContext = new MainViewModel();
+                                mainViewModel.SelectedUserControl = view;
+                            }
                         }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Не правильный логин или пароль!");
+                        else
+                        {
+                            MessageBox.Show("Не правильный логин или пароль!");
+                        }
                     }
                 }
                 else

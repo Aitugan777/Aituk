@@ -5,29 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AitukCore.Models
+namespace AitukCore.Contracts
 {
-    public class ASeller
+    public class SellerContract
     {
-        [Key]
         public int Id { get; set; }
 
-        [Required]
-        [EmailAddress]
         public string Email { get; set; }
 
-        [Phone]
         public string PhoneNumber { get; set; }
 
-        [Required]
         public string Password { get; set; }
 
-        public string LastName { get; set; }
-
-        public string FirstName { get; set; }
-
-        public string SecondName { get; set; }
-
-        public List<AShop> Shops { get; set; }
+        public string FullName { get; set; }
     }
 }

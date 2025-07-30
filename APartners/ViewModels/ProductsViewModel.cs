@@ -1,5 +1,4 @@
-﻿using AitukCore.Models;
-using APartners.Commands;
+﻿using APartners.Commands;
 using APartners.Models;
 using APartners.Services;
 using APartners.Views;
@@ -44,9 +43,11 @@ namespace APartners.ViewModels
         {
             if (SelectedProduct != null)
             {
+                var productService = DIContainer.GetService<IProductService>();
+                var product = await productService.GetProductAsync((long)SelectedProduct.Id!);
                 var mainWindowViewModel = DIContainer.GetService<MainWindowViewModel>();
                 var editProductView = new AddEditProductView();
-                editProductView.DataContext = new AddEditProductViewModel(false, SelectedProduct);
+                editProductView.DataContext = new AddEditProductViewModel(false, product);
                 mainWindowViewModel.SelectedUserControl = editProductView;
             }
         }

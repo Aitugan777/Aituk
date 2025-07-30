@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
-namespace AitukCore.Models
+namespace HaveServer.Models
 {
     public class AShop
     {
         [Key]
-        public long Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -24,17 +19,12 @@ namespace AitukCore.Models
         public double PositionY { get; set; }
 
         [ForeignKey("ASeller")]
-        public long SellerId { get; set; }
+        public int SellerId { get; set; }
 
         [JsonIgnore]
         public ASeller? Seller { get; set; }
 
         [JsonIgnore]
         public List<AProduct>? Products { get; set; }
-
-        public APhoto Photo {  get; set; }
-
-        [JsonIgnore]
-        public bool IsChecked { get; set; }
     }
 }

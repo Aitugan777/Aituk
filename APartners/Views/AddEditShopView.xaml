@@ -4,49 +4,210 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:APartners.Views"
+             xmlns:local2="clr-namespace:APartners.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+
+
+    <UserControl.Resources>
+        <local2:ImageEqualityConverter x:Key="ImageEqualityConverter"/>
+        <local2:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="300"/>
-            <RowDefinition Height="90"/>
-            <RowDefinition/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Border Margin="10" Padding="10" Background="White" CornerRadius="10" BorderThickness="0">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition  />
-                    <RowDefinition Height="30" />
-                </Grid.RowDefinitions>
+        <!-- 📷 Фотографии + Характеристики -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="400" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-                <Image Source="{Binding ShopImage}" />
-                <Button Grid.Row="1" Content="Заменить фотографию" Command="{Binding UpdateImageCommand}" />
-            </Grid>
-        </Border>
-        <Border Grid.Row="1" Margin="10" Padding="10" Background="White" CornerRadius="10" BorderThickness="0.7" BorderBrush="Black">
+            <!-- Левая часть: фотографии -->
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Border CornerRadius="20" BorderBrush="#DDD" BorderThickness="1" Background="White">
+                    <Grid>
+                        <Rectangle RadiusX="20" RadiusY="20">
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="{Binding SelectedImage}" Stretch="Uniform" />
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Column="1" BorderBrush="#DDD" BorderThickness="1" Margin="10, 0, 0, 0" CornerRadius="10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
+                            <RowDefinition />
+                            <RowDefinition Height="35" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="{Binding Shop.Photos.Count, Mode=OneWay, StringFormat=Фотографий {0}/5}" VerticalAlignment="Center" Margin="5, 0, 0, 0" />
+
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding Shop.Photos}"
+                              AutoGenerateColumns="False"
+                              HeadersVisibility="None"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              IsReadOnly="True"
+                              RowHeight="50"
+                              SelectionMode="Single"
+                              SelectedItem="{Binding SelectedImage, Mode=TwoWay}">
+
+                            <DataGrid.Columns>
+                                <!-- Фото -->
+                                <DataGridTemplateColumn Width="60">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border>
+                                                <Border.BorderBrush>
+                                                    <MultiBinding Converter="{StaticResource ImageEqualityConverter}">
+                                                        <Binding />
+                                                        <Binding Path="SelectedImage" />
+                                                    </MultiBinding>
+                                                </Border.BorderBrush>
+                                                <Image Source="{Binding}" Width="50" Height="50" Stretch="Uniform" Cursor="Hand"
+                                                   MouseLeftButtonDown="Image_MouseLeftButtonDown" />
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <!-- Кнопки управления -->
+                                <DataGridTemplateColumn Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button Content="↑" Width="30"
+                                                    Command="{Binding DataContext.MoveUpCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" />
+                                                <Button Content="↓" Width="30" Margin="10,0"
+                                                    Command="{Binding DataContext.MoveDownCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" />
+                                                <Button Content="х" Width="30" Margin="0,0,10,0"
+                                                    Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <Button Grid.Row="2" Command="{Binding UpdateImageCommand}" Margin="10, 0, 10, 5" Content="Добавить фото" Foreground="Green" FontSize="14" />
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Магазины: график работы -->
+            <Grid Grid.Row="1" Margin="0,0,0,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <Label Content="Название" />
-                <TextBox Style="{StaticResource MultiLine}" Grid.Row="1" Text="{Binding Shop.Name}" />
+                <TextBlock Text="График работы" FontSize="13" Margin="10,5" />
+                <UniformGrid Grid.Row="1" Rows="8" Columns="4">
+                    <TextBlock Text="День" />
+                    <TextBlock Text="Время С" />
+                    <TextBlock Text="Время До" />
+                    <TextBlock Text="Рабочий день" />
+
+                    <!-- Понедельник -->
+                    <TextBlock Text="Понедельник" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Monday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Monday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Monday.IsWorkingDay, Mode=TwoWay}" />
+
+                    <!-- Вторник -->
+                    <TextBlock Text="Вторник" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Tuesday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Tuesday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Tuesday.IsWorkingDay, Mode=TwoWay}" />
+
+                    <!-- Среда -->
+                    <TextBlock Text="Среда" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Wednesday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Wednesday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Wednesday.IsWorkingDay, Mode=TwoWay}" />
+
+                    <!-- Четверг -->
+                    <TextBlock Text="Четверг" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Thursday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Thursday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Thursday.IsWorkingDay, Mode=TwoWay}" />
+
+                    <!-- Пятница -->
+                    <TextBlock Text="Пятница" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Friday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Friday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Friday.IsWorkingDay, Mode=TwoWay}" />
+
+                    <!-- Суббота -->
+                    <TextBlock Text="Суббота" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Saturday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Saturday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Saturday.IsWorkingDay, Mode=TwoWay}" />
+
+                    <!-- Воскресенье -->
+                    <TextBlock Text="Воскресенье" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Sunday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Sunday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Sunday.IsWorkingDay, Mode=TwoWay}" />
+                </UniformGrid>
             </Grid>
-        </Border>
-        <Border Grid.Row="2" Margin="10" Padding="10" Background="White" CornerRadius="10" BorderThickness="0.7" BorderBrush="Black">
-            <Grid>
+
+            <!-- Правая часть: характеристики -->
+            <Grid Grid.Column="1" Grid.RowSpan="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="30" />
                     <RowDefinition />
+                    <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
 
-                <Label Content="Описание" />
-                <TextBox Style="{StaticResource MultiLine}" Grid.Row="1" Text="{Binding Shop.Description}" />
+                <ScrollViewer Margin="10, 0, 0, 10" VerticalScrollBarVisibility="Hidden">
+                    <StackPanel>
+                        <TextBlock Text="Название*" />
+                        <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 5, 0, 0" />
+
+                        <TextBlock Text="Описание*" Margin="0, 10, 0, 0" />
+                        <TextBox Style="{StaticResource MultiLine}" Text="{Binding Shop.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 5, 0, 0" Height="160" />
+
+                        <TextBlock Text="Адрес" Margin="0, 10, 0, 0" />
+                        <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 5, 0, 0" />
+
+                        <UniformGrid Rows="2">
+                            <TextBlock Text="Широта" VerticalAlignment="Bottom" Margin="0, 10, 0, 0" />
+                            <TextBlock Text="Долгота" VerticalAlignment="Bottom" Margin="5, 10, 0, 0" />
+                            <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.Latitude, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 5, 5, 0" />
+                            <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.Longitude, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5, 5, 0, 0" />
+                        </UniformGrid>
+
+                        <TextBlock Text="Номер телефона*" Margin="0, 10, 0, 0" />
+                        <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.Contacts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 5, 0, 0" />
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- ✅ Кнопка сохранить -->
+                <UniformGrid Grid.Row="1" Grid.Column="1" Rows="1">
+                    <Button Content="Отмена" Foreground="Red" FontSize="15" Command="{Binding CancelCommand}" Margin="10, 0" />
+                    <Button Content="Сохранить" Foreground="Green" FontSize="15" Command="{Binding SaveCommand}" />
+                </UniformGrid>
             </Grid>
-        </Border>
-        <Button Grid.Row="3" Content="Сохранить" Command="{Binding SaveCommand}" Cursor="Hand" />
+        </Grid>
     </Grid>
 </UserControl>

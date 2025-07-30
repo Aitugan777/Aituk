@@ -1,4 +1,4 @@
-﻿using AitukCore.Models;
+﻿using APartners.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +10,10 @@ namespace APartners.Services
 {
     public interface IProductService
     {
-        Task<List<AProduct>> GetProductsAsync(AProductFilter filter);
         Task<List<AProduct>> GetProductsAsync();
+        Task<AProduct> GetProductAsync(long productId);
         Task AddProduct(AProduct product);
         Task SaveProduct(AProduct product);
         Task DeleteProduct(long productId);
-        Task<List<ImageSource>> GetProductPhotosAsync(long productId);
     }
 }

@@ -1,4 +1,5 @@
-﻿using AitukCore.Models;
+﻿using AitukCore.Contracts;
+using APartners.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
@@ -32,7 +34,6 @@ namespace APartners.Services
             }
             else
             {
-                // Обновляем существующий токен
                 _httpClient.DefaultRequestHeaders.Remove("Authorization");
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
@@ -41,34 +42,43 @@ namespace APartners.Services
         public async Task AddShop(AShop shop)
         {
             AddAuthHeader();
-            var response = await _httpClient.PostAsJsonAsync("api/AShop", shop);
-            response.EnsureSuccessStatusCode();
+            var contract = shop.ToContract();
+            var json = System.Text.Json.JsonSerializer.Serialize(contract, new JsonSerializerOptions { WriteIndented = true });
+            Console.WriteLine("Отправляем JSON:");
+            Console.WriteLine(json);
+            var response = await _httpClient.PostAsJsonAsync("api/Shop", contract);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorText = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Ошибка {response.StatusCode}: {errorText}");
+            }
         }
 
         public async Task DeleteShop(long shopId)
         {
             AddAuthHeader();
-            var response = await _httpClient.DeleteAsync($"api/AShop/{shopId}");
+            var response = await _httpClient.DeleteAsync($"api/Shop/{shopId}");
             response.EnsureSuccessStatusCode();
         }
 
         public async Task<List<AShop>> GetShops()
         {
             AddAuthHeader();
-            var response = await _httpClient.GetAsync("api/AShop");
+            var response = await _httpClient.GetAsync("api/Shop/compact");
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<List<AShop>>();
+
+            var compactContracts = await response.Content.ReadFromJsonAsync<List<ShopCompactContract>>();
+            return compactContracts.Select(c => new AShop(c)).ToList();
         }
+
 
         public async Task SaveShop(AShop shop)
         {
             AddAuthHeader();
+            var contract = shop.ToContract();
 
-            //var json = JsonSerializer.Serialize(shop);
-            //Console.WriteLine("Отправляем на сервер SaveShop JSON:");
-            //Console.WriteLine(json);
-
-            var response = await _httpClient.PutAsJsonAsync($"api/AShop/{shop.Id}", shop);
+            var response = await _httpClient.PutAsJsonAsync($"api/Shop/{shop.Id}", contract);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -77,14 +87,19 @@ namespace APartners.Services
             }
         }
 
-        public Task SavePhotoAsync(byte[] photoBytes, long shopId)
+        public async Task<AShop> GetShop(long shopId)
         {
-            throw new NotImplementedException();
-        }
+            AddAuthHeader();
+            var response = await _httpClient.GetAsync($"api/Shop/{shopId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Ошибка {response.StatusCode}: {error}");
+            }
 
-        public Task<ImageSource> GetShopPhotoAsync(long shopId)
-        {
-            throw new NotImplementedException();
+            var contract = await response.Content.ReadFromJsonAsync<ShopContract>();
+            return new AShop(contract);
         }
     }
+
 }

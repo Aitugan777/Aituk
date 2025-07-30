@@ -1,4 +1,4 @@
-﻿using AitukCore.Models;
+﻿using APartners.Models;
 using APartners.Services;
 using Newtonsoft.Json;
 using System;
@@ -37,15 +37,26 @@ namespace APartners.TestServices
         {
             return Task.FromResult(AllShops);
         }
+        
+        public Task<AShop?> GetShop(long shopId)
+        {
+            var shop = AllShops.Where(x => x.Id == shopId).FirstOrDefault();
+            return Task.FromResult(shop);
+        }
 
         public Task AddShop(AShop shop)
         {
             shop.Id = ++Identety;
             AllShops.Add(shop);
 
-            string photoPath = $"{shop.Id}.jpg";
-            if (shop.Photo != null)
-                File.WriteAllBytes(photoPath, shop.Photo.Content);
+            if (shop.Photos != null)
+            {
+                for (int i = 0; i < shop.Photos.Count; i++)
+                {
+                    string filePath = $"{shop.Id}_product_{i}.{FileHelper.GetImageFormat(shop.Photos[i].ConvertToBytes())}";
+                    File.WriteAllBytes(filePath, shop.Photos[i].ConvertToBytes());
+                }
+            }
 
             return Task.CompletedTask;
         }
@@ -64,22 +75,16 @@ namespace APartners.TestServices
                 checkShop.Name = shop.Name;
                 checkShop.Description = shop.Description;
 
-                string photoPath = $"{shop.Id}.jpg";
-                if (shop.Photo != null)
-                    File.WriteAllBytes(photoPath, shop.Photo.Content);
+                if (shop.Photos != null)
+                {
+                    for (int i = 0; i < shop.Photos.Count; i++)
+                    {
+                        string filePath = $"{shop.Id}_product_{i}.{FileHelper.GetImageFormat(shop.Photos[i].ConvertToBytes())}";
+                        File.WriteAllBytes(filePath, shop.Photos[i].ConvertToBytes());
+                    }
+                }
             }
             return Task.CompletedTask;
-        }
-
-        public Task<ImageSource> GetShopPhotoAsync(long shopId)
-        {
-            string photoPath = $"{shopId}.jpg";
-            if (File.Exists(photoPath))
-            {
-                byte[] bytes = File.ReadAllBytes(photoPath);
-                return Task.FromResult<ImageSource>(FileHelper.LoadImage(bytes));
-            }
-            return Task.FromResult<ImageSource>(null);
         }
     }
 }

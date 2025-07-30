@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AitukCore.Models
+namespace AitukCore.Contracts
 {
-    public class AProductFilter
+    public class ProductFilterContract
     {
         public long? ShopId { get; set; }
         public string? ProductName { get; set; }

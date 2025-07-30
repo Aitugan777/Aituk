@@ -1,4 +1,5 @@
-﻿using System;
+﻿using APartners.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,13 @@ namespace APartners.Views
         public AddEditShopView()
         {
             InitializeComponent();
+        }
+        private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Image image && DataContext is AddEditProductViewModel vm)
+            {
+                vm.SelectedImage = image.Source;
+            }
         }
     }
 }

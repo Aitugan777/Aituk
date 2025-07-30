@@ -12,139 +12,181 @@
         <local2:ImageEqualityConverter x:Key="ImageEqualityConverter"/>
         <local2:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
     </UserControl.Resources>
-
-    <Grid Margin="20">
+    
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="2*"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- 📷 Фотографии -->
-        <Border Grid.Row="0" CornerRadius="10" BorderBrush="#DDD" BorderThickness="1" Background="White" Margin="0 0 0 10">
+        <!-- 📷 Фотографии + Характеристики -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="400"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <!-- Левая часть: фотографии -->
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="350"/>
+                    <ColumnDefinition Width="300"/>
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="250"/>
-                        <ColumnDefinition Width="100"/>
-                    </Grid.ColumnDefinitions>
 
-                    <!-- Главное фото -->
-                    <Border BorderBrush="#DDD" BorderThickness="1"  Margin="10 10 0 10">
-                        <Image Source="{Binding SelectedImage}" Stretch="Uniform" />
-                    </Border>
+                <Border CornerRadius="20" BorderBrush="#DDD" BorderThickness="1" Background="White">
+                    <Grid>
+                        <Rectangle RadiusX="20" RadiusY="20">
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="{Binding SelectedImage}" Stretch="Uniform"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </Grid>
+                </Border>
 
-                    <Grid Grid.Column="1" >
+                <Border Grid.Column="1" BorderBrush="#DDD" BorderThickness="1" Margin="10, 0, 0, 0" CornerRadius="10">
+                    <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="20" />
+                            <RowDefinition />
+                            <RowDefinition Height="35" />
                         </Grid.RowDefinitions>
 
-                        <!-- Галерея -->
-                        <Border BorderBrush="#DDD" BorderThickness="1"  Margin="0 10 0 0">
-                            <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto">
-                                <ItemsControl ItemsSource="{Binding ProductImages}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Vertical"/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
+                        <TextBlock Text="{Binding ProductImages.Count, Mode=OneWay, StringFormat=Фотографий {0}/5}" VerticalAlignment="Center" Margin="5, 0, 0, 0" />
+
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding ProductImages}" 
+                              AutoGenerateColumns="False" 
+                              HeadersVisibility="None" 
+                              CanUserAddRows="False" 
+                              CanUserDeleteRows="False" 
+                              IsReadOnly="True"
+                              RowHeight="50"
+                              SelectionMode="Single"
+                              SelectedItem="{Binding SelectedImage, Mode=TwoWay}">
+
+                            <DataGrid.Columns>
+                                <!-- Фото -->
+                                <DataGridTemplateColumn Width="60">
+                                    <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Border BorderThickness="2" Margin="5">
+                                            <Border>
                                                 <Border.BorderBrush>
                                                     <MultiBinding Converter="{StaticResource ImageEqualityConverter}">
                                                         <Binding />
                                                         <Binding Path="SelectedImage" />
                                                     </MultiBinding>
                                                 </Border.BorderBrush>
-                                                <Image Source="{Binding}" Width="80" Height="80" Stretch="Uniform" Cursor="Hand"
-                                           MouseLeftButtonDown="Image_MouseLeftButtonDown"/>
+                                                <Image Source="{Binding}" Width="50" Height="50" Stretch="Uniform" Cursor="Hand"
+                                                 MouseLeftButtonDown="Image_MouseLeftButtonDown"/>
                                             </Border>
                                         </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ScrollViewer>
-                        </Border>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
 
-                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                            <Button Command="{Binding UpdateImageCommand}" Margin="5">
-                                <Image Source="https://images.icon-icons.com/3858/PNG/64/add_file_insert_file_new_file_icon_238367.png" />
-                            </Button>
-                            <Button Command="{Binding DeleteImageCommand}" Margin="5">
-                                <Image Source="https://images.icon-icons.com/3858/PNG/64/close_file_remove_file_icon_238366.png" />
-                            </Button>
-                        </StackPanel>
+                                <!-- Кнопки управления -->
+                                <DataGridTemplateColumn Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button Content="↑" Width="30"
+                                                    Command="{Binding DataContext.MoveUpCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" />
+                                                <Button Content="↓" Width="30" Margin="10,0"
+                                                    Command="{Binding DataContext.MoveDownCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" />
+                                                <Button Content="х" Width="30" Margin="0,0,10,0"
+                                                    Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <Button Grid.Row="2" Command="{Binding UpdateImageCommand}" Margin="10, 0, 10, 5" Content="Добавить фото" Foreground="Green" FontSize="14" />
                     </Grid>
-
-                </Grid>
-
-                <Grid Grid.Column="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="2*"/>
-                    </Grid.ColumnDefinitions>
-                    <!-- 💰 Параметры товара -->
-                    <StackPanel Margin="10 0 10 10">
-                        <TextBlock Text="Цена (Руб.)" Margin="0, 10, 0, 0"/>
-                        <TextBox Style="{StaticResource OneLine}"  Margin="0, 10, 0, 0"/>
-
-                        <TextBlock Text="Количество" Margin="0, 10, 0, 0"/>
-                        <TextBox Style="{StaticResource OneLine}" Margin="0, 10, 0, 0"/>
-
-                        <TextBlock Text="Категория" Margin="0, 10, 0, 0"/>
-                        <ComboBox Style="{StaticResource OneLineComboBox}"  Margin="0, 10, 0, 0"/>
-                    </StackPanel>
-
-                    <Border Grid.Column="1" BorderBrush="#DDD" BorderThickness="1, 0, 0, 0">
-                        <StackPanel >
-                            <TextBlock Text="Магазины" Margin="10, 0"/>
-                            <DataGrid Grid.ColumnSpan="2" Grid.Row="1" Margin="10, 0" AutoGenerateColumns="False" ItemsSource="{Binding Shops}" CanUserAddRows="False">
-                                <DataGrid.Columns>
-                                    <DataGridCheckBoxColumn Width="30"
-                                                            Header=""
-                                                            Binding="{Binding IsChecked, Mode=TwoWay}" IsReadOnly="False" />
-                                    <DataGridTextColumn Width="0.3*" Header="Название" Binding="{Binding Name}" IsReadOnly="True" />
-                                    <DataGridTextColumn Width="0.5*" Header="Адрес" Binding="{Binding Address}" IsReadOnly="True" />
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </StackPanel>
-                    </Border>
-                </Grid>
+                </Border>
             </Grid>
-        </Border>
 
-        <!-- 📝 Основная информация -->
-        <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="10" Margin="0 0 0 10" BorderBrush="#DDD" BorderThickness="1">
-            <Grid>
+            <!-- Магазины -->
+            <Grid Grid.Row="1" Margin="0,10,0,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition />
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Название:" VerticalAlignment="Center" Margin="5"/>
-                <TextBox Grid.Column="1" Style="{StaticResource OneLine}" Text="{Binding Product.Name}" Margin="5"/>
-
-                <TextBlock Text="Описание:" Grid.Row="1" VerticalAlignment="Top" Margin="5"/>
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Product.Description}" Margin="5" 
-                         TextWrapping="Wrap" AcceptsReturn="True" Height="80"/>
+                <TextBlock Text="Магазины в которых имеется" FontSize="13" Margin="10,5"/>
+                <DataGrid Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding Product.Shops, Mode=TwoWay}" CanUserAddRows="False" Margin="10,0" >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Width="100" Binding="{Binding ProductCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Header="Количество"
+                                        IsReadOnly="False" />
+                        <DataGridTextColumn Width="0.3*" FontSize="13" Header="Название" Binding="{Binding Name}" IsReadOnly="True" />
+                        <DataGridTextColumn Width="0.5*" FontSize="13" Header="Адрес" Binding="{Binding Address}" IsReadOnly="True" />
+                    </DataGrid.Columns>
+                </DataGrid>
             </Grid>
-        </Border>
 
+            <!-- Правая часть: характеристики -->
+            <Grid Grid.Column="1" Grid.RowSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                
+                <ScrollViewer  Margin="10, 0, 0, 10" VerticalScrollBarVisibility="Hidden">
+                    <StackPanel>
+                        <TextBlock Text="Название*" />
+                        <TextBox Grid.Column="1" Style="{StaticResource OneLine}" Text="{Binding Product.Name}" Margin="0, 5, 0, 0" />
 
-        <!-- ✅ Кнопка сохранить -->
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Сохранить" Command="{Binding SaveCommand}" Padding="10,5" Margin="5"/>
-        </StackPanel>
+                        <TextBlock Text="Описание*"  Margin="0, 10, 0, 0"/>
+                        <TextBox Grid.Row="1" Style="{StaticResource MultiLine}" Grid.Column="1" Text="{Binding Product.Description}" Margin="0, 5, 0, 0" Height="160" />
+
+                        <UniformGrid Rows="6">
+
+                            <TextBlock Text="Пол" VerticalAlignment="Bottom" Margin="0, 10, 0, 0"/>
+                            <TextBlock Text="Категория*" VerticalAlignment="Bottom" Margin="5, 10, 0, 0" />
+                            <ComboBox Style="{StaticResource OneLineComboBox}" Margin="0,5,5,0">
+                                <ComboBoxItem Content="Мужской"/>
+                                <ComboBoxItem Content="Женский"/>
+                                <ComboBoxItem Content="Универсал"/>
+                            </ComboBox>
+                            <ComboBox Style="{StaticResource OneLineComboBox}" Margin="5, 5, 0, 0" />
+
+                            <TextBlock Text="Цвет" VerticalAlignment="Bottom" Margin="0, 10, 0, 0" />
+                            <TextBlock Text="Цена*" VerticalAlignment="Bottom" Margin="5, 10, 0, 0" />
+                            <ComboBox Style="{StaticResource OneLineComboBox}" Margin="0, 5, 5, 0" />
+                            <TextBox Style="{StaticResource OneLine}" Margin="5, 5, 0, 0" />
+
+                            <TextBlock Text="Количество" VerticalAlignment="Bottom" Margin="0, 10, 0, 0" />
+                            <TextBlock Text="Штрихкод" VerticalAlignment="Bottom" Margin="6, 10, 0, 0" />
+                            <TextBox Style="{StaticResource OneLine}" Text="{Binding Product.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Margin="0, 5, 5, 0" />
+                            <TextBox Style="{StaticResource OneLine}" Margin="5, 5, 0, 0" />
+                        </UniformGrid>
+
+                        <TextBlock Text="Размер*" Margin="0, 10, 0, 0" />
+                        <local:MultiSelectDropdown DataContext="{Binding MultiSelectVM}" Margin="0, 5, 0, 0" />
+
+                        <TextBlock Text="Бренд" Margin="0, 10, 0, 0" />
+                        <TextBox Style="{StaticResource OneLine}" Margin="0, 5, 0, 0" />
+
+                        <TextBlock Text="Ключевые слова" Margin="0, 10, 0, 0" />
+                        <TextBox Style="{StaticResource OneLine}" Margin="0, 5, 0, 0" />
+                    </StackPanel>
+                </ScrollViewer>
+                <!-- ✅ Кнопка сохранить -->
+                <UniformGrid Grid.Row="1" Grid.Column="1" Rows="1">
+                    <Button Content="Отмена" Foreground="Red" FontSize="15" Command="{Binding SaveCommand}" Margin="10, 0" />
+                    <Button Content="Сохранить" Foreground="Green" FontSize="15" Command="{Binding SaveCommand}" />
+                </UniformGrid>
+            </Grid>
+        </Grid>
+
     </Grid>
 </UserControl>

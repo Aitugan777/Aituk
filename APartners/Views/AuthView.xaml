@@ -10,12 +10,12 @@
     <Border VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="200" Background="White" Padding="10" CornerRadius="10">
         <StackPanel>
             <Label Content="AITUK" Margin="0, 0, 0, 20" HorizontalAlignment="Center" FontSize="18" FontWeight="SemiBold"/>
-            <TextBox Style="{StaticResource OneLine}" Text="{Binding Login}" />
             <Label Content="логин" Foreground="Gray"/>
+            <TextBox Style="{StaticResource OneLine}" Text="{Binding Login}" />
             <!--PasswordBox нельзя забиндить, поэтому достучаемся до него через имя-->
-            <PasswordBox Name="pbx_Password" PasswordChanged="PasswordChanged" />
             <Label Content="пароль" Foreground="Gray"/>
-            <Button Content=" Войти " Margin="0, 10, 0, 0" HorizontalAlignment="Center" FontSize="14" Command="{Binding LoginCommand}" />
+            <PasswordBox Name="pbx_Password" PasswordChanged="PasswordChanged" />
+            <Button Content="Войти" Margin="0, 15, 0, 0" FontSize="14" Height="25" Command="{Binding LoginCommand}" />
         </StackPanel>
     </Border>
 </UserControl>

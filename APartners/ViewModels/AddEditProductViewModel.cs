@@ -1,5 +1,4 @@
-﻿using AitukCore.Models;
-using APartners.Commands;
+﻿using APartners.Commands;
 using APartners.Models;
 using APartners.Services;
 using APartners.Views;
@@ -26,17 +25,6 @@ namespace APartners.ViewModels
         /// Признак добавления магазина
         /// </summary>
         private bool _isAddProduct;
-
-        private ObservableCollection<AShop> _shops;
-        public ObservableCollection<AShop> Shops
-        {
-            get => _shops;
-            set
-            {
-                _shops = value;
-                OnPropertyChanged(nameof(Shops));
-            }
-        }
 
         /// <summary>
         /// Команда для добавления/сохранения 
@@ -67,9 +55,12 @@ namespace APartners.ViewModels
         public bool IsImageSelected => SelectedImage != null;
 
         public ICommand DeleteImageCommand { get; }
-
         public ObservableCollection<ImageSource> ProductImages { get; set; }
-        
+        public ICommand MoveUpCommand { get; }
+        public ICommand MoveDownCommand { get; }
+        public ICommand RemoveCommand { get; }
+
+        public MultiSelectViewModel MultiSelectVM { get; set; } = new MultiSelectViewModel();
 
         /// <summary>
         /// конструктор
@@ -82,99 +73,12 @@ namespace APartners.ViewModels
             _isAddProduct = isAddProduct;
             SaveCommand = new AsyncRelayCommand(async x => await SaveAsync());
 
-            UpdateImageCommand = new RelayCommand(async x => await UpdateImageAsync());
-
-            if (!isAddProduct)
-                LoadImageAsync(product.Id);
-
             Product = product;
 
-            InitialAsync();
-        }
+            MoveUpCommand = new CollectionCommand<ImageSource>(MoveUp, CanMoveUp);
+            MoveDownCommand = new CollectionCommand<ImageSource>(MoveDown, CanMoveDown);
+            RemoveCommand = new CollectionCommand<ImageSource>(Remove);
 
-        public async Task InitialAsync()
-        {
-            var shopService = DIContainer.GetService<IShopService>();
-            Shops = new ObservableCollection<AShop>(await shopService.GetShops());
-        }
-
-        private void DeleteImage()
-        {
-            if (SelectedImage != null)
-            {
-                ProductImages.Remove(SelectedImage);
-                // Также удалить из Product.Photos, если есть связь
-                var imageBytes = ImageSourceToByteArray(SelectedImage);
-                var photoToRemove = Product.Photos.FirstOrDefault(p => p.Content.SequenceEqual(imageBytes));
-                if (photoToRemove != null)
-                    Product.Photos.Remove(photoToRemove);
-
-                SelectedImage = null;
-            }
-        }
-        private byte[] ImageSourceToByteArray(ImageSource imageSource)
-        {
-            if (imageSource is BitmapSource bitmapSource)
-            {
-                var encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
-                using var stream = new MemoryStream();
-                encoder.Save(stream);
-                return stream.ToArray();
-            }
-            return null;
-        }
-
-        private async Task UpdateImageAsync()
-        {
-            var paths = FileHelper.OpenMultipleImageFileDialog();
-            if (paths == null || paths.Length == 0) return;
-
-            if (Product != null)
-            {
-                if (Product.Photos == null)
-                    Product.Photos = new List<APhoto>();
-
-                if (ProductImages == null)
-                    ProductImages = new ObservableCollection<ImageSource>();
-
-                foreach (var path in paths)
-                {
-                    byte[] imageBytes = File.ReadAllBytes(path);
-
-                    var photo = new APhoto
-                    {
-                        Content = imageBytes,
-                        ParentId = Product.Id,
-                        PhotoFor = EPhotoFor.Product
-                    };
-
-                    Product.Photos.Add(photo);
-                    ProductImages.Add(LoadImage(imageBytes));
-                }
-            }
-        }
-
-        private async Task LoadImageAsync(long productId)
-        {
-            var productService = DIContainer.GetService<IProductService>();
-            var photos = await productService.GetProductPhotosAsync(productId);
-            if (photos != null)
-            {
-                ProductImages = new ObservableCollection<ImageSource>(photos);
-            }
-        }
-
-        private ImageSource LoadImage(byte[] bytes)
-        {
-            using var stream = new MemoryStream(bytes);
-            var image = new BitmapImage();
-            image.BeginInit();
-            image.StreamSource = stream;
-            image.CacheOption = BitmapCacheOption.OnLoad;
-            image.EndInit();
-            image.Freeze();
-            return image;
         }
 
         /// <summary>
@@ -195,8 +99,43 @@ namespace APartners.ViewModels
             }
 
             var mainViewModel = DIContainer.GetService<MainWindowViewModel>();
-            mainViewModel.SelectedUserControl = new ShopsView();
-            mainViewModel.SelectedUserControl.DataContext = new ShopsViewModel();
+
+            var view = new MainView();
+            view.DataContext = new MainViewModel();
+            mainViewModel.SelectedUserControl = view;
         }
+
+
+        #region управление фотографией
+
+
+        private void MoveUp(ImageSource image)
+        {
+            int index = ProductImages.IndexOf(image);
+            if (index > 0)
+            {
+                ProductImages.Move(index, index - 1);
+            }
+        }
+
+        private bool CanMoveUp(ImageSource image) => ProductImages.IndexOf(image) > 0;
+
+        private void MoveDown(ImageSource image)
+        {
+            int index = ProductImages.IndexOf(image);
+            if (index < ProductImages.Count - 1)
+            {
+                ProductImages.Move(index, index + 1);
+            }
+        }
+
+        private bool CanMoveDown(ImageSource image) => ProductImages.IndexOf(image) < ProductImages.Count - 1;
+
+        private void Remove(ImageSource image)
+        {
+            ProductImages.Remove(image);
+        }
+
+        #endregion
     }
 }
