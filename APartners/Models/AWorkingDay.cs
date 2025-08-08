@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AitukCore.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -43,6 +44,25 @@ namespace APartners.Models
             StartTime = startTime;
             EndTime = endTime;
         }
+        
+        public AWorkDay(WorkDayContract contract)
+        {
+            Day = contract.Day;
+            IsWorkingDay = contract.IsWorkingDay;
+            StartTime = contract.StartTime;
+            EndTime = contract.EndTime;
+        }
+
+        public WorkDayContract ToContract()
+        {
+            return new WorkDayContract
+            {
+                Day = Day,
+                StartTime = StartTime,
+                EndTime = EndTime,
+                IsWorkingDay = IsWorkingDay
+            };
+        }
 
         /// <summary>
         /// Удобное текстовое представление
@@ -54,5 +74,4 @@ namespace APartners.Models
                 : $"{Day}: выходной";
         }
     }
-
 }

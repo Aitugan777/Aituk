@@ -21,9 +21,9 @@ namespace APartners.ViewModels
     public class ShopsViewModel : ViewModelBase
     {
         private MainWindowViewModel _mainViewModel;
+        private IShopService _shopService;
 
         private ObservableCollection<AShop> _shops;
-        private ObservableCollection<AProduct> _products;
         public ObservableCollection<AShop> Shops
         {
             get => _shops;
@@ -42,38 +42,31 @@ namespace APartners.ViewModels
             {
                 _selectedShop = value;
                 OnPropertyChanged(nameof(SelectedShop));
-            }
-        }
-
-        private ImageSource _shopImage;
-        public ImageSource ShopImage
-        {
-            get => _shopImage;
-            set
-            {
-                _shopImage = value;
-                OnPropertyChanged(nameof(ShopImage));
+                EditCommand.RaiseCanExecuteChanged();
+                DeleteCommand.RaiseCanExecuteChanged();
             }
         }
 
         public ICommand AddCommand { get; set; }
-        public ICommand EditCommand { get; set; }
-        public ICommand DeleteCommand { get; set; }
+        public AsyncRelayCommand EditCommand { get; set; }
+        public AsyncRelayCommand DeleteCommand { get; set; }
 
         public ShopsViewModel() 
         {
             _mainViewModel = DIContainer.GetService<MainWindowViewModel>();
+
+            _shopService = DIContainer.GetService<IShopService>();
+
             Shops = new ObservableCollection<AShop>();
             AddCommand = new RelayCommand(x => AddShop());
-            EditCommand = new AsyncRelayCommand(async x => await EditShop());
-            DeleteCommand = new RelayCommand(x => DeleteShop());
-            Initial();
+            EditCommand = new AsyncRelayCommand(async x => await EditShop(), x => SelectedShop != null);
+            DeleteCommand = new AsyncRelayCommand(async x => await DeleteShop(), x => SelectedShop != null);
+            InitialAsync();
         }
 
-        private async Task Initial()
+        private async Task InitialAsync()
         {
-            var shopService = DIContainer.GetService<IShopService>();
-            var shops = await shopService.GetShops();
+            var shops = await _shopService.GetShops();
             Shops = new ObservableCollection<AShop>(shops);
         }
 
@@ -82,17 +75,18 @@ namespace APartners.ViewModels
             _mainViewModel.SelectedUserControl = new AddEditShopView();
             _mainViewModel.SelectedUserControl.DataContext = new AddEditShopViewModel(true, new AShop());
         }
+
         public async Task EditShop()
         {
-            var shopService = DIContainer.GetService<IShopService>();
-            var shop = await shopService.GetShop(SelectedShop.Id.Value);
+            var shop = await _shopService.GetShop(SelectedShop.Id);
             _mainViewModel.SelectedUserControl = new AddEditShopView();
             _mainViewModel.SelectedUserControl.DataContext = new AddEditShopViewModel(false, shop);
         }
 
-        public void DeleteShop()
+        public async Task DeleteShop()
         {
+            await _shopService.DeleteShop(SelectedShop.Id);
+            await InitialAsync();
         }
-
     }
 }

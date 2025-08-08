@@ -57,9 +57,9 @@
                             <RowDefinition Height="35" />
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="{Binding ProductImages.Count, Mode=OneWay, StringFormat=Фотографий {0}/5}" VerticalAlignment="Center" Margin="5, 0, 0, 0" />
+                        <TextBlock Text="{Binding Product.Photos.Count, Mode=OneWay, StringFormat=Фотографий {0}/5}" VerticalAlignment="Center" Margin="5, 0, 0, 0" />
 
-                        <DataGrid Grid.Row="1" ItemsSource="{Binding ProductImages}" 
+                        <DataGrid Grid.Row="1" ItemsSource="{Binding Product.Photos}" 
                               AutoGenerateColumns="False" 
                               HeadersVisibility="None" 
                               CanUserAddRows="False" 
@@ -122,7 +122,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="Магазины в которых имеется" FontSize="13" Margin="10,5"/>
-                <DataGrid Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding Product.Shops, Mode=TwoWay}" CanUserAddRows="False" Margin="10,0" >
+                <DataGrid Grid.Row="1" AutoGenerateColumns="False" ItemsSource="{Binding Shops, Mode=TwoWay}" CanUserAddRows="False" Margin="10,0" >
                     <DataGrid.Columns>
                         <DataGridTextColumn Width="100" Binding="{Binding ProductCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         Header="Количество"
@@ -143,46 +143,52 @@
                 <ScrollViewer  Margin="10, 0, 0, 10" VerticalScrollBarVisibility="Hidden">
                     <StackPanel>
                         <TextBlock Text="Название*" />
-                        <TextBox Grid.Column="1" Style="{StaticResource OneLine}" Text="{Binding Product.Name}" Margin="0, 5, 0, 0" />
+                        <TextBox Grid.Column="1" Style="{StaticResource OneLine}" Text="{Binding Product.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 5, 0, 0" />
 
                         <TextBlock Text="Описание*"  Margin="0, 10, 0, 0"/>
-                        <TextBox Grid.Row="1" Style="{StaticResource MultiLine}" Grid.Column="1" Text="{Binding Product.Description}" Margin="0, 5, 0, 0" Height="160" />
+                        <TextBox Grid.Row="1" Style="{StaticResource MultiLine}" Grid.Column="1" Text="{Binding Product.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 5, 0, 0" Height="160" />
 
                         <UniformGrid Rows="6">
 
                             <TextBlock Text="Пол" VerticalAlignment="Bottom" Margin="0, 10, 0, 0"/>
                             <TextBlock Text="Категория*" VerticalAlignment="Bottom" Margin="5, 10, 0, 0" />
-                            <ComboBox Style="{StaticResource OneLineComboBox}" Margin="0,5,5,0">
-                                <ComboBoxItem Content="Мужской"/>
-                                <ComboBoxItem Content="Женский"/>
-                                <ComboBoxItem Content="Универсал"/>
-                            </ComboBox>
-                            <ComboBox Style="{StaticResource OneLineComboBox}" Margin="5, 5, 0, 0" />
+                            <ComboBox Style="{StaticResource OneLineComboBox}" Margin="0, 5, 5, 0"
+                                      ItemsSource="{Binding Genders}"
+                                      DisplayMemberPath="Name"
+                                      SelectedItem="{Binding Product.Gender, Mode=TwoWay}" />
 
+                            <ComboBox Style="{StaticResource OneLineComboBox}" Margin="5, 5, 0, 0"
+                                      ItemsSource="{Binding Categories}"
+                                      DisplayMemberPath="Name"
+                                      SelectedItem="{Binding Product.Category, Mode=TwoWay}" />
+                            
                             <TextBlock Text="Цвет" VerticalAlignment="Bottom" Margin="0, 10, 0, 0" />
                             <TextBlock Text="Цена*" VerticalAlignment="Bottom" Margin="5, 10, 0, 0" />
-                            <ComboBox Style="{StaticResource OneLineComboBox}" Margin="0, 5, 5, 0" />
-                            <TextBox Style="{StaticResource OneLine}" Margin="5, 5, 0, 0" />
+                            <ComboBox Style="{StaticResource OneLineComboBox}" Margin="0, 5, 5, 0"
+                                      ItemsSource="{Binding Colors}"
+                                      DisplayMemberPath="Name"
+                                      SelectedItem="{Binding Product.Color, Mode=TwoWay}" />
+                            <TextBox Style="{StaticResource OneLine}" Text="{Binding Product.Cost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5, 5, 0, 0" />
 
-                            <TextBlock Text="Количество" VerticalAlignment="Bottom" Margin="0, 10, 0, 0" />
+                            <TextBlock Text="Общее количество" VerticalAlignment="Bottom" Margin="0, 10, 0, 0" />
                             <TextBlock Text="Штрихкод" VerticalAlignment="Bottom" Margin="6, 10, 0, 0" />
-                            <TextBox Style="{StaticResource OneLine}" Text="{Binding Product.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Margin="0, 5, 5, 0" />
-                            <TextBox Style="{StaticResource OneLine}" Margin="5, 5, 0, 0" />
+                            <TextBox Style="{StaticResource OneLine}" Text="{Binding AllProductCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Margin="0, 5, 5, 0" />
+                            <TextBox Style="{StaticResource OneLine}" Text="{Binding Product.Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5, 5, 0, 0" />
                         </UniformGrid>
 
                         <TextBlock Text="Размер*" Margin="0, 10, 0, 0" />
-                        <local:MultiSelectDropdown DataContext="{Binding MultiSelectVM}" Margin="0, 5, 0, 0" />
+                        <local:MultiSelectDropdown Margin="0, 5, 0, 0" />
 
                         <TextBlock Text="Бренд" Margin="0, 10, 0, 0" />
-                        <TextBox Style="{StaticResource OneLine}" Margin="0, 5, 0, 0" />
+                        <TextBox Style="{StaticResource OneLine}" Text="{Binding Product.Brand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="0, 5, 0, 0" />
 
                         <TextBlock Text="Ключевые слова" Margin="0, 10, 0, 0" />
-                        <TextBox Style="{StaticResource OneLine}" Margin="0, 5, 0, 0" />
+                        <TextBox Style="{StaticResource OneLine}" Text="{Binding Product.KeyWords, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="0, 5, 0, 0" />
                     </StackPanel>
                 </ScrollViewer>
                 <!-- ✅ Кнопка сохранить -->
                 <UniformGrid Grid.Row="1" Grid.Column="1" Rows="1">
-                    <Button Content="Отмена" Foreground="Red" FontSize="15" Command="{Binding SaveCommand}" Margin="10, 0" />
+                    <Button Content="Отмена" Foreground="Red" FontSize="15" Command="{Binding CancelCommand}" Margin="10, 0" />
                     <Button Content="Сохранить" Foreground="Green" FontSize="15" Command="{Binding SaveCommand}" />
                 </UniformGrid>
             </Grid>

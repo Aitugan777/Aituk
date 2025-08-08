@@ -54,10 +54,10 @@
                         Background="White"
                         CornerRadius="3">
                     <ScrollViewer MaxHeight="200" Margin="4,6,4,6" VerticalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding Items}">
+                        <ItemsControl ItemsSource="{Binding Sizes}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <CheckBox Content="{Binding DisplayText}"
+                                    <CheckBox Content="{Binding Value.Name}"
                                               IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                                               Margin="5" VerticalContentAlignment="Center"/>
                                 </DataTemplate>

@@ -2,12 +2,7 @@
 using APartners.Models;
 using APartners.Services;
 using APartners.Views;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace APartners.ViewModels
@@ -32,13 +27,24 @@ namespace APartners.ViewModels
             set => SetValue(value, nameof(SelectedProduct));
         }
 
+        public ICommand AddCommand { get; set; }
         public ICommand EditCommand { get; set; }
 
         public ProductsViewModel()
         {
+            AddCommand = new AsyncRelayCommand(async _ => await AddProduct());
             EditCommand = new AsyncRelayCommand(async _ => await EditProduct());
         }
 
+        private async Task AddProduct()
+        {
+            AProduct newProduct = new AProduct();
+            var mainWindowViewModel = DIContainer.GetService<MainWindowViewModel>();
+            var editProductView = new AddEditProductView();
+            editProductView.DataContext = new AddEditProductViewModel(true, newProduct);
+            mainWindowViewModel.SelectedUserControl = editProductView;
+        }
+        
         private async Task EditProduct()
         {
             if (SelectedProduct != null)
@@ -55,7 +61,7 @@ namespace APartners.ViewModels
         public async Task InitializeAsync()
         {
             var productService = DIContainer.GetService<IProductService>();
-            var productsList = await productService.GetProductsAsync();
+            var productsList = await productService.GetAllProductsAsync();
             Products = new ObservableCollection<AProduct>(productsList);
         }
     }

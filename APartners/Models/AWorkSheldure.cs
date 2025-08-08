@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AitukCore.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,10 @@ namespace APartners.Models
 
         public AWorkSheldure()
         {
+            InitalizeWorkSheldure();
+        }
+        private void InitalizeWorkSheldure()
+        {
             Monday = new AWorkDay(DayOfWeek.Monday, false);
             Tuesday = new AWorkDay(DayOfWeek.Tuesday, false);
             Wednesday = new AWorkDay(DayOfWeek.Wednesday, false);
@@ -25,6 +30,36 @@ namespace APartners.Models
             Friday = new AWorkDay(DayOfWeek.Friday, false);
             Saturday = new AWorkDay(DayOfWeek.Saturday, false);
             Sunday = new AWorkDay(DayOfWeek.Sunday, false);
+        }
+
+        public AWorkSheldure(WorkSheldureContract contract)
+        {
+            if (contract == null)
+            {
+                InitalizeWorkSheldure();
+                return;
+            }
+            Monday = contract.Monday != null ? new AWorkDay(contract.Monday) : null;
+            Tuesday = contract.Tuesday != null ? new AWorkDay(contract.Tuesday) : null;
+            Wednesday = contract.Wednesday != null ? new AWorkDay(contract.Wednesday) : null;
+            Thursday = contract.Thursday != null ? new AWorkDay(contract.Thursday) : null;
+            Friday = contract.Friday != null ? new AWorkDay(contract.Friday) : null;
+            Saturday = contract.Saturday != null ? new AWorkDay(contract.Saturday) : null;
+            Sunday = contract.Sunday != null ? new AWorkDay(contract.Sunday) : null;
+        }
+
+        public WorkSheldureContract ToContract()
+        {
+            return new WorkSheldureContract
+            {
+                Monday = Monday != null ? Monday.ToContract() : null,
+                Tuesday = Tuesday != null ? Tuesday.ToContract() : null,
+                Wednesday = Wednesday != null ? Wednesday.ToContract() : null,
+                Thursday = Thursday != null ? Thursday.ToContract() : null,
+                Friday = Friday != null ? Friday.ToContract() : null,
+                Saturday = Saturday != null ? Saturday.ToContract() : null,
+                Sunday = Sunday != null ? Sunday.ToContract() : null
+            };
         }
     }
 }

@@ -9,10 +9,9 @@ namespace APartners.Services
 {
     public interface IClothPropertiesService
     {
-        List<AColor> GetColors();
-        List<ASize> GetSizes();
-        List<ACategory> GetCategories();
-        List<AGender> GetGenders();
+        Task<List<AColor>> GetColorsAsync();
+        Task<List<ASize>> GetSizesAsync();
+        Task<List<ACategory>> GetCategoriesAsync();
+        Task<List<AGender>> GetGendersAsync();
     }
-
 }

@@ -19,7 +19,7 @@ namespace APartners.Models
         public string? Description { get => GetValue<string?>(nameof(Description)); set => SetValue(value, nameof(Description)); }
         public decimal? Cost { get => GetValue<decimal?>(nameof(Cost)); set => SetValue(value, nameof(Cost)); }
         public ObservableCollection<AShop>? Shops { get => GetValue<ObservableCollection<AShop>>(nameof(Shops)); set => SetValue(value, nameof(Shops)); }
-        public ObservableCollection<ASize>? Sizes { get => GetValue<ObservableCollection<ASize>?>(nameof(Sizes)); set => SetValue(value, nameof(Sizes)); }
+        public List<ASize>? Sizes { get => GetValue<List<ASize>?>(nameof(Sizes)); set => SetValue(value, nameof(Sizes)); }
         public ACategory? Category { get => GetValue<ACategory?>(nameof(Category)); set => SetValue(value, nameof(Category)); }
         public AColor? Color { get => GetValue<AColor?>(nameof(Color)); set => SetValue(value, nameof(Color)); }
         public AGender? Gender { get => GetValue<AGender?>(nameof(Gender)); set => SetValue(value, nameof(Gender)); }
@@ -28,8 +28,6 @@ namespace APartners.Models
         public string? KeyWords { get => GetValue<string?>(nameof(KeyWords)); set => SetValue(value, nameof(KeyWords)); }
         public ObservableCollection<ImageSource>? Photos { get => GetValue<ObservableCollection<ImageSource>?>(nameof(Photos)); set => SetValue(value, nameof(Photos)); }
         public ImageSource? MainPhoto { get => GetValue<ImageSource?>(nameof(MainPhoto)); set => SetValue(value, nameof(MainPhoto)); }
-
-        public int? Count { get => Shops?.Sum(x => x.ProductCount); }
 
         /// <summary>
         /// Создание полноценного товара для карточки
@@ -47,17 +45,6 @@ namespace APartners.Models
                 return new AShop(x);
             }));
 
-            var clothPropertiesService = DIContainer.GetService<IClothPropertiesService>();
-
-            Sizes = new ObservableCollection<ASize>(productContract.Sizes.Select(x =>
-            {
-                return clothPropertiesService.GetSizes().Where(ax => ax.Id == x).First();
-            }).ToList());
-
-            Category = clothPropertiesService.GetCategories().Where(x => x.Id == productContract.CategoryId).FirstOrDefault();
-
-            Color = clothPropertiesService.GetColors().Where(x => x.Id == productContract.ColorId).FirstOrDefault();
-            Gender = clothPropertiesService.GetGenders().Where(x => x.Id == productContract.GenderId).FirstOrDefault();
             Brand = productContract.Brand;
             Code = productContract.Code;
             KeyWords = productContract.KeyWords;
@@ -70,7 +57,34 @@ namespace APartners.Models
                         return photoBytes.ConvertToImageSource();
                     }));
             }
+
+            Initial(productContract);
         }
+
+        public async Task Initial(ProductContract productContract)
+        {
+            var clothPropertiesService = DIContainer.GetService<IClothPropertiesService>();
+
+            // Получаем все размеры один раз
+            var allSizes = await clothPropertiesService.GetSizesAsync();
+            var matchingSizes = productContract.Sizes
+                .Select(id => allSizes.FirstOrDefault(size => size.Id == id))
+                .Where(size => size != null)
+                .ToList();
+            Sizes = new List<ASize>(matchingSizes);
+
+            // Получаем все категории, цвета, полы асинхронно
+            var categoriesTask = clothPropertiesService.GetCategoriesAsync();
+            var colorsTask = clothPropertiesService.GetColorsAsync();
+            var gendersTask = clothPropertiesService.GetGendersAsync();
+
+            await Task.WhenAll(categoriesTask, colorsTask, gendersTask);
+
+            Category = categoriesTask.Result.FirstOrDefault(x => x.Id == productContract.CategoryId);
+            Color = colorsTask.Result.FirstOrDefault(x => x.Id == productContract.ColorId);
+            Gender = gendersTask.Result.FirstOrDefault(x => x.Id == productContract.GenderId);
+        }
+
 
         /// <summary>
         /// Создание товара для грида
@@ -84,6 +98,7 @@ namespace APartners.Models
             Cost = productCompactContract.Cost;
             MainPhoto = productCompactContract.MainPhoto.ConvertToImageSource();
         }
+
         public ProductContract ToContract()
         {
             return new ProductContract
@@ -99,7 +114,7 @@ namespace APartners.Models
                 ColorId = this.Color?.Id ?? 0,
                 GenderId = this.Gender?.Id ?? 0,
                 Sizes = this.Sizes?.Select(s => s.Id).ToList() ?? new List<int>(),
-                Shops = this.Shops?.Select(s => new ShopCompactContract { Id = s.Id ?? 0 }).ToList() ?? new List<ShopCompactContract>(),
+                Shops = this.Shops?.Select(s => new ShopCompactContract { Id = s.Id, ProductCount = s.ProductCount ?? 0 }).ToList() ?? new List<ShopCompactContract>(),
                 Photos = this.Photos?.Select(photo => photo.ConvertToBytes()).ToList() ?? new List<byte[]>()
             };
         }

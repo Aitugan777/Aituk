@@ -25,23 +25,8 @@ namespace APartners.Services
             _authService = authService;
         }
 
-        private void AddAuthHeader()
-        {
-            var token = _authService.GetToken();
-            if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }
-            else
-            {
-                _httpClient.DefaultRequestHeaders.Remove("Authorization");
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }
-        }
-
         public async Task AddShop(AShop shop)
         {
-            AddAuthHeader();
             var contract = shop.ToContract();
             var json = System.Text.Json.JsonSerializer.Serialize(contract, new JsonSerializerOptions { WriteIndented = true });
             Console.WriteLine("Отправляем JSON:");
@@ -57,25 +42,21 @@ namespace APartners.Services
 
         public async Task DeleteShop(long shopId)
         {
-            AddAuthHeader();
             var response = await _httpClient.DeleteAsync($"api/Shop/{shopId}");
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task<List<AShop>> GetShops()
+        public async Task<List<AShop>?> GetShops()
         {
-            AddAuthHeader();
             var response = await _httpClient.GetAsync("api/Shop/compact");
             response.EnsureSuccessStatusCode();
 
             var compactContracts = await response.Content.ReadFromJsonAsync<List<ShopCompactContract>>();
-            return compactContracts.Select(c => new AShop(c)).ToList();
+            return compactContracts?.Select(c => new AShop(c)).ToList();
         }
-
 
         public async Task SaveShop(AShop shop)
         {
-            AddAuthHeader();
             var contract = shop.ToContract();
 
             var response = await _httpClient.PutAsJsonAsync($"api/Shop/{shop.Id}", contract);
@@ -89,7 +70,6 @@ namespace APartners.Services
 
         public async Task<AShop> GetShop(long shopId)
         {
-            AddAuthHeader();
             var response = await _httpClient.GetAsync($"api/Shop/{shopId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -100,6 +80,34 @@ namespace APartners.Services
             var contract = await response.Content.ReadFromJsonAsync<ShopContract>();
             return new AShop(contract);
         }
-    }
 
+        public async Task<PositionContract?> GetCoordinatesByAddressAsync(string address)
+        {
+            if (string.IsNullOrWhiteSpace(address))
+                return null;
+
+            var url = $"api/geo/coords?address={Uri.EscapeDataString(address)}";
+
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Ошибка запроса к GeoController: {error}");
+                return null;
+            }
+
+            var position = await response.Content.ReadFromJsonAsync<PositionContract>();
+            return position;
+        }
+
+        public async Task<List<AContactType>?> GetContactTypesAsync()
+        {
+            var response = await _httpClient.GetAsync("api/Shop/contactTypes");
+            response.EnsureSuccessStatusCode();
+
+            var contactTypes = await response.Content.ReadFromJsonAsync<List<ContactTypeContract>>();
+            return contactTypes?.Select(c => new AContactType(c)).ToList();
+        }
+    }
 }

@@ -130,45 +130,45 @@
 
                     <!-- Понедельник -->
                     <TextBlock Text="Понедельник" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Monday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Monday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Monday.IsWorkingDay, Mode=TwoWay}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Monday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 2, 2" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Monday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 2, 2" />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Monday.IsWorkingDay, Mode=TwoWay}" VerticalAlignment="Center" Margin="5, 0" />
 
                     <!-- Вторник -->
                     <TextBlock Text="Вторник" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Tuesday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Tuesday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Tuesday.IsWorkingDay, Mode=TwoWay}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Tuesday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="0, 0, 2, 2" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Tuesday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="0, 0, 2, 2"  />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Tuesday.IsWorkingDay, Mode=TwoWay}" VerticalAlignment="Center" Margin="5, 0" />
 
                     <!-- Среда -->
                     <TextBlock Text="Среда" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Wednesday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Wednesday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Wednesday.IsWorkingDay, Mode=TwoWay}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Wednesday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 2, 2" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Wednesday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 2, 2" />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Wednesday.IsWorkingDay, Mode=TwoWay}" VerticalAlignment="Center" Margin="5, 0" />
 
                     <!-- Четверг -->
                     <TextBlock Text="Четверг" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Thursday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Thursday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Thursday.IsWorkingDay, Mode=TwoWay}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Thursday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 2, 2" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Thursday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 2, 2" />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Thursday.IsWorkingDay, Mode=TwoWay}" VerticalAlignment="Center" Margin="5, 0" />
 
                     <!-- Пятница -->
                     <TextBlock Text="Пятница" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Friday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Friday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Friday.IsWorkingDay, Mode=TwoWay}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Friday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 2, 2" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Friday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 2, 2" />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Friday.IsWorkingDay, Mode=TwoWay}" VerticalAlignment="Center" Margin="5, 0" />
 
                     <!-- Суббота -->
                     <TextBlock Text="Суббота" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Saturday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Saturday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Saturday.IsWorkingDay, Mode=TwoWay}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Saturday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 2, 2" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Saturday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 2, 2" />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Saturday.IsWorkingDay, Mode=TwoWay}" VerticalAlignment="Center" Margin="5, 0" />
 
                     <!-- Воскресенье -->
                     <TextBlock Text="Воскресенье" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Sunday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Sunday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Sunday.IsWorkingDay, Mode=TwoWay}" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Sunday.StartTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 2, 2" />
+                    <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.WorkSheldure.Sunday.EndTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 0, 2, 2" />
+                    <CheckBox IsChecked="{Binding Shop.WorkSheldure.Sunday.IsWorkingDay, Mode=TwoWay}" VerticalAlignment="Center" Margin="5, 0" />
                 </UniformGrid>
             </Grid>
 
@@ -188,17 +188,62 @@
                         <TextBox Style="{StaticResource MultiLine}" Text="{Binding Shop.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 5, 0, 0" Height="160" />
 
                         <TextBlock Text="Адрес" Margin="0, 10, 0, 0" />
-                        <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 5, 0, 0" />
+                        <Grid  Margin="0, 5, 0, 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.Address, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button Grid.Column="1" Content="  Найти  " Command="{Binding SearchCoordinatesCommand}" Margin="5, 0, 5, 0"/>
+                        </Grid>
 
                         <UniformGrid Rows="2">
                             <TextBlock Text="Широта" VerticalAlignment="Bottom" Margin="0, 10, 0, 0" />
                             <TextBlock Text="Долгота" VerticalAlignment="Bottom" Margin="5, 10, 0, 0" />
-                            <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.Latitude, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 5, 5, 0" />
-                            <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.Longitude, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5, 5, 0, 0" />
+                            <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.Latitude, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Margin="0, 5, 5, 0" />
+                            <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.Longitude, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Margin="5, 5, 0, 0" />
                         </UniformGrid>
 
-                        <TextBlock Text="Номер телефона*" Margin="0, 10, 0, 0" />
-                        <TextBox Style="{StaticResource OneLine}" Text="{Binding Shop.Contacts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0, 5, 0, 0" />
+                        <GroupBox Header="Контакты" Margin="0, 10, 0, 0" >
+                            <StackPanel>
+
+                                <!-- Кнопка добавления нового контакта -->
+                                <Button Content="  Добавить контакт  " Height="28" Foreground="Green" Margin="0,0,0,10"
+                                    Command="{Binding AddContactCommand}" HorizontalAlignment="Right" />
+
+                                <!-- Список контактов -->
+                                <ItemsControl ItemsSource="{Binding Shop.Contacts}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel Margin="0,0,0,5">
+
+                                                <!-- Кнопка удалить справа -->
+                                                <Button Content="  Удалить  " Foreground="Red"
+                                                    Command="{Binding DataContext.RemoveContactCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}" 
+                                                    Margin="5,0,0,0"
+                                                    DockPanel.Dock="Right" />
+
+                                                <!-- ComboBox для выбора типа контакта -->
+                                                <ComboBox Style="{StaticResource OneLineComboBox}" 
+                                                      ItemsSource="{Binding DataContext.ContactTypes, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                      DisplayMemberPath="Name"
+                                                      SelectedValuePath="Id"
+                                                      SelectedValue="{Binding ContactTypeId, Mode=TwoWay}"
+                                                      Margin="0,0,5,0" MinWidth="80" />
+
+                                                <!-- TextBox для ввода значения контакта -->
+                                                <TextBox Style="{StaticResource OneLine}" 
+                                 Text="{Binding Value, Mode=TwoWay}" />
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                            </StackPanel>
+                        </GroupBox>
+
                     </StackPanel>
                 </ScrollViewer>
 

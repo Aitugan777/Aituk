@@ -85,6 +85,26 @@ namespace APartners.TestServices
             ClothPropertiesCache.AGenders = genders;
             return genders;
         }
+
+        public Task<List<AColor>> GetColorsAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<ASize>> GetSizesAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<ACategory>> GetCategoriesAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<AGender>> GetGendersAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

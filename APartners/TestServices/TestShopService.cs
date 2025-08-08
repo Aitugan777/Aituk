@@ -1,4 +1,5 @@
-﻿using APartners.Models;
+﻿using AitukCore.Contracts;
+using APartners.Models;
 using APartners.Services;
 using Newtonsoft.Json;
 using System;
@@ -85,6 +86,16 @@ namespace APartners.TestServices
                 }
             }
             return Task.CompletedTask;
+        }
+
+        public Task<PositionContract?> GetCoordinatesByAddressAsync(string address)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<AContactType>?> GetContactTypesAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

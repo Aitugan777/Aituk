@@ -16,10 +16,6 @@ namespace APartners.Services
         /// <returns>токен</returns>
         Task<bool> Authorize(string username, string password);
 
-        /// <summary>
-        /// Получение токена
-        /// </summary>
-        /// <returns>токен</returns>
-        string GetToken();
+        Task<bool> RefreshTokenAsync();
     }
 }

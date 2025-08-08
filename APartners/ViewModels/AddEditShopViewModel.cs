@@ -26,12 +26,33 @@ namespace APartners.ViewModels
         /// Признак добавления магазина
         /// </summary>
         private bool _isAddShop { get; set; }
+        private IShopService _shopService { get; set; }
 
         /// <summary>
         /// Команда для добавления/сохранения 
         /// </summary>
         public ICommand SaveCommand { get; }
         public ICommand UpdateImageCommand { get; }
+
+        public ICommand MoveUpCommand { get; }
+        public ICommand MoveDownCommand { get; }
+        public ICommand RemoveCommand { get; }
+        public AsyncRelayCommand SearchCoordinatesCommand { get; }
+
+        public ICommand AddContactCommand => new RelayCommand(x =>
+        {
+            if (Shop.Contacts == null)
+                Shop.Contacts = new ObservableCollection<AContact>();
+            Shop.Contacts.Add(new AContact());
+        });
+
+        public ICommand RemoveContactCommand => new CollectionCommand<AContact>(contact =>
+        {
+            if (Shop.Contacts == null)
+                Shop.Contacts = new ObservableCollection<AContact>();
+            if (Shop.Contacts.Contains(contact))
+                Shop.Contacts.Remove(contact);
+        });
 
         /// <summary>
         /// Текущий магазин
@@ -40,6 +61,15 @@ namespace APartners.ViewModels
         {
             get => GetValue<AShop>(nameof(Shop));
             set => SetValue(value, nameof(Shop));
+        }
+        
+        /// <summary>
+        /// Текущий магазин
+        /// </summary>
+        public ObservableCollection<AContactType>? ContactTypes
+        {
+            get => GetValue<ObservableCollection<AContactType>>(nameof(ContactTypes));
+            set => SetValue(value, nameof(ContactTypes));
         }
 
         /// <summary>
@@ -58,11 +88,54 @@ namespace APartners.ViewModels
         /// <param name="shop">магазин</param>
         public AddEditShopViewModel(bool isAddShop, AShop shop) 
         {
+            if (shop.WorkSheldure == null)
+            {
+                shop.WorkSheldure = new AWorkSheldure
+                {
+                    Monday = new AWorkDay(DayOfWeek.Monday, true, new TimeSpan(9, 0, 0), new TimeSpan(18, 0, 0)),
+                    Tuesday = new AWorkDay(DayOfWeek.Tuesday, true, new TimeSpan(9, 0, 0), new TimeSpan(18, 0, 0)),
+                    Wednesday = new AWorkDay(DayOfWeek.Wednesday, true, new TimeSpan(9, 0, 0), new TimeSpan(18, 0, 0)),
+                    Thursday = new AWorkDay(DayOfWeek.Thursday, true, new TimeSpan(9, 0, 0), new TimeSpan(18, 0, 0)),
+                    Friday = new AWorkDay(DayOfWeek.Friday, true, new TimeSpan(9, 0, 0), new TimeSpan(18, 0, 0)),
+                    Saturday = new AWorkDay(DayOfWeek.Saturday, false),
+                    Sunday = new AWorkDay(DayOfWeek.Sunday, false)
+                };
+            }
+            _shopService = DIContainer.GetService<IShopService>();
+
             _isAddShop = isAddShop;
             Shop = shop;
 
             SaveCommand = new AsyncRelayCommand(async x => await SaveAsync());
             UpdateImageCommand = new RelayCommand(x => UpdateImage());
+
+            MoveUpCommand = new CollectionCommand<ImageSource>(MoveUp, CanMoveUp);
+            MoveDownCommand = new CollectionCommand<ImageSource>(MoveDown, CanMoveDown);
+            RemoveCommand = new CollectionCommand<ImageSource>(Remove);
+
+            SearchCoordinatesCommand = new AsyncRelayCommand(async x => await SearchCoordinatesAsync(), y => IsActiveButtonSearchCoordinates());
+
+            Shop.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(Shop.Address))
+                {
+                    SearchCoordinatesCommand.RaiseCanExecuteChanged();
+                }
+            };
+
+            InitialAsync();
+        }
+
+        private bool IsActiveButtonSearchCoordinates()
+        {
+            return Shop != null && !string.IsNullOrEmpty(Shop.Address);
+        }
+
+        public async Task InitialAsync()
+        {
+            var listContactTypes = await _shopService.GetContactTypesAsync();
+            if (listContactTypes != null)
+                ContactTypes = new ObservableCollection<AContactType>(listContactTypes);
         }
 
         private void UpdateImage()
@@ -110,5 +183,52 @@ namespace APartners.ViewModels
             view.DataContext = new MainViewModel();
             mainViewModel.SelectedUserControl = view;
         }
+
+        public async Task SearchCoordinatesAsync()
+        {
+            using (new WaitIndicator("Поиск адреса..."))
+            {
+                var shopService = DIContainer.GetService<IShopService>();
+                if (Shop ==  null || string.IsNullOrEmpty(Shop.Address)) return;
+                var coordinateContract = await shopService.GetCoordinatesByAddressAsync(Shop.Address);
+                if (coordinateContract == null) return;
+                Shop.Latitude = coordinateContract.Latitude;
+                Shop.Longitude = coordinateContract.Longitude;
+                Shop.Address = coordinateContract.FullAddress;
+            }
+
+        }
+
+        #region управление фотографией
+
+
+        private void MoveUp(ImageSource image)
+        {
+            int index = Shop.Photos.IndexOf(image);
+            if (index > 0)
+            {
+                Shop.Photos.Move(index, index - 1);
+            }
+        }
+
+        private bool CanMoveUp(ImageSource image) => Shop.Photos.IndexOf(image) > 0;
+
+        private void MoveDown(ImageSource image)
+        {
+            int index = Shop.Photos.IndexOf(image);
+            if (index < Shop.Photos.Count - 1)
+            {
+                Shop.Photos.Move(index, index + 1);
+            }
+        }
+
+        private bool CanMoveDown(ImageSource image) => Shop.Photos.IndexOf(image) < Shop.Photos.Count - 1;
+
+        private void Remove(ImageSource image)
+        {
+            Shop.Photos.Remove(image);
+        }
+
+        #endregion
     }
 }

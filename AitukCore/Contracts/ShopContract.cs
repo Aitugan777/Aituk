@@ -24,5 +24,9 @@ namespace AitukCore.Contracts
         public double? Longitude { get; set; }
 
         public List<byte[]> Photos { get; set; }
+
+        public WorkSheldureContract WorkSheldure { get; set; }
+
+        public List<ContactContract> Contacts { get; set; }
     }
 }

@@ -18,5 +18,10 @@ namespace APartners.TestServices
         {
             return PublicProperties.JWT;
         }
+
+        public Task<bool> RefreshTokenAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

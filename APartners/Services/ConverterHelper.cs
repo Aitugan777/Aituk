@@ -14,7 +14,7 @@ namespace APartners.Services
         public static ImageSource ConvertToImageSource(this byte[] bytes)
         {
             if (bytes == null || bytes.Length == 0)
-                throw new ArgumentException("Byte array is empty", nameof(bytes));
+                return null;
 
             using var mem = new MemoryStream(bytes);
             var image = new BitmapImage();

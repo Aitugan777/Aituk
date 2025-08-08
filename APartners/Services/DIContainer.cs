@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,58 +19,54 @@ namespace APartners.Services
             var services = new ServiceCollection();
 
             services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<TokenStore>();
+            services.AddTransient<JwtHandler>();
 
-            //Тестовый режим
-            //RegisterTestServices(services);
-
-            //Боевой режим
             RegisterReleaseServices(services);
 
             ServiceProvider = services.BuildServiceProvider();
         }
 
         /// <summary>
-        /// Регистрация тестовых сервисов
-        /// </summary>
-        /// <param name="services"></param>
-        private static void RegisterTestServices(ServiceCollection services)
-        {
-            services.AddScoped<IAuthService, TestAuthService>();
-            services.AddScoped<IShopService, TestShopService>();
-            services.AddScoped<IProductService, TestProductService>();
-            services.AddScoped<IClothPropertiesService, TestClothPropertiesService>();
-        }
-
-        /// <summary>
         /// Регистрация боевых сервисов
         /// </summary>
-        /// <param name="services"></param>
-        private static void RegisterReleaseServices(ServiceCollection services)
+        private static void RegisterReleaseServices(IServiceCollection services)
         {
             var apiBaseAddress = new Uri("http://94.41.23.37:5070/");
 
-            services.AddHttpClient<IAuthService, AuthService>(client =>
+            var sharedHandler = new SocketsHttpHandler
             {
-                client.BaseAddress = apiBaseAddress;
-            });
+                PooledConnectionLifetime = TimeSpan.FromSeconds(60)
+            };
 
-            services.AddHttpClient<IShopService, ShopService>(client =>
-            {
-                client.BaseAddress = apiBaseAddress;
-            });
-
-            services.AddHttpClient<IProductService, ProductService>(client =>
-            {
-                client.BaseAddress = apiBaseAddress;
-            });
-
-            services.AddHttpClient<IClothPropertiesService, ClothPropertiesService>(client =>
-            {
-                client.BaseAddress = apiBaseAddress;
-            });
+            RegisterHttpService<IAuthService, AuthService>(services, apiBaseAddress, sharedHandler, withJwt: false);
+            RegisterHttpService<IShopService, ShopService>(services, apiBaseAddress, sharedHandler, withJwt: true);
+            RegisterHttpService<IProductService, ProductService>(services, apiBaseAddress, sharedHandler, withJwt: true);
+            RegisterHttpService<IClothPropertiesService, ClothPropertiesService>(services, apiBaseAddress, sharedHandler, withJwt: true);
         }
 
-        public static T GetService<T>() => ServiceProvider.GetService<T>();
+        private static void RegisterHttpService<TInterface, TImplementation>(
+            IServiceCollection services,
+            Uri baseAddress,
+            SocketsHttpHandler sharedHandler,
+            bool withJwt
+        )
+            where TInterface : class
+            where TImplementation : class, TInterface
+        {
+            var clientBuilder = services.AddHttpClient<TInterface, TImplementation>(client =>
+            {
+                client.BaseAddress = baseAddress;
+            })
+            .ConfigurePrimaryHttpMessageHandler(() => sharedHandler);
+
+            if (withJwt)
+            {
+                clientBuilder.AddHttpMessageHandler<JwtHandler>();
+            }
+        }
+
+        public static T GetService<T>() => ServiceProvider.GetRequiredService<T>();
     }
 
 }

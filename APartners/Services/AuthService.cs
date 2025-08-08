@@ -11,51 +11,51 @@ namespace APartners.Services
     public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
+        private readonly TokenStore _tokenStore;
 
-        public AuthService(HttpClient httpClient)
+        public AuthService(HttpClient httpClient, TokenStore tokenStore)
         {
             _httpClient = httpClient;
+            _tokenStore = tokenStore;
         }
 
         public async Task<bool> Authorize(string username, string password)
         {
-            var loginModel = new LoginModel
-            {
-                Email = username,
-                Password = password
-            };
-
+            var loginModel = new { Email = username, Password = password };
             var response = await _httpClient.PostAsJsonAsync("api/Auth/login", loginModel);
+            response.EnsureSuccessStatusCode();
 
-            if (response.IsSuccessStatusCode)
+            var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
+            if (result != null && !string.IsNullOrEmpty(result.Token))
             {
-                var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
-
-                if (result != null && !string.IsNullOrEmpty(result.Token))
-                {
-                    PublicProperties.JWT = result.Token;
-                    return true;
-                }
+                _tokenStore.SetToken(result.Token, result.ExpiresIn);
+                return true;
             }
 
             return false;
         }
 
-        public string GetToken()
+        public async Task<bool> RefreshTokenAsync()
         {
-            return PublicProperties.JWT;
+            var response = await _httpClient.GetAsync("api/Auth/refresh");
+            if (!response.IsSuccessStatusCode) return false;
+
+            var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
+            if (result != null && !string.IsNullOrEmpty(result.Token))
+            {
+                _tokenStore.SetToken(result.Token, result.ExpiresIn);
+                return true;
+            }
+
+            return false;
         }
 
         private class AuthResponse
         {
             public string Token { get; set; }
-        }
-
-        private class LoginModel
-        {
-            public string Email { get; set; }
-            public string Password { get; set; }
+            public int ExpiresIn { get; set; } // seconds
         }
     }
+
 
 }

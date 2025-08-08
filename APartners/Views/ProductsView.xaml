@@ -28,6 +28,13 @@
 
         <DataGrid Grid.ColumnSpan="2" Grid.Row="1" Margin="10, 0" AutoGenerateColumns="False" ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}" IsReadOnly="True">
             <DataGrid.Columns>
+                <DataGridTemplateColumn Width="50" Header="Фото">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding MainPhoto}" Width="30" Height="40"  />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Width="70" Header="Арт" Binding="{Binding Id}" />
                 <DataGridTextColumn Width="0.5*" Header="Название" Binding="{Binding Name}" />
                 <DataGridTextColumn Width="*" Header="Описание" Binding="{Binding Description}" />

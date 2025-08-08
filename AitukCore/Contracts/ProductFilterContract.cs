@@ -8,9 +8,11 @@ namespace AitukCore.Contracts
 {
     public class ProductFilterContract
     {
-        public long? ShopId { get; set; }
-        public string? ProductName { get; set; }
-        public string? ProductDescription { get; set; }
+        public string? SearchText { get; set; }
+        public List<int>? SizeIds { get; set; }
+        public List<int>? ColorIds { get; set; }
+        public List<int>? CategoryIds { get; set; }
+        public int? GenderId { get; set; }
         public decimal? MinCost { get; set; }
         public decimal? MaxCost { get; set; }
     }

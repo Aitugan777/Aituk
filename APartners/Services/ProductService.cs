@@ -22,40 +22,32 @@ namespace APartners.Services
             _authService = authService;
         }
 
-        private void AddAuthHeader()
-        {
-            var token = _authService.GetToken();
-            if (!_httpClient.DefaultRequestHeaders.Contains("Authorization"))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }
-            else
-            {
-                _httpClient.DefaultRequestHeaders.Remove("Authorization");
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            }
-        }
 
         // Возвращаем полный список продуктов с компактным контрактом (если есть),
         // но API отдаёт компактный контракт только через POST by-shops,
         // тут предполагаю GetProducts без фильтра - полный список с компактными контрактами.
-        public async Task<List<AProduct>> GetProductsAsync()
+        public async Task<List<AProduct>> GetProductsByShopsAsync(List<long> shopIds)
         {
-            AddAuthHeader();
-
-            // Если есть отдельный эндпоинт для всех продуктов компактных:
-            var response = await _httpClient.GetAsync("api/Product");
+            var response = await _httpClient.PostAsJsonAsync("api/Product/by-shops", shopIds);
             response.EnsureSuccessStatusCode();
 
             var compactContracts = await response.Content.ReadFromJsonAsync<List<ProductCompactContract>>();
             return compactContracts.Select(c => new AProduct(c)).ToList();
         }
 
+        public async Task<List<AProduct>> GetAllProductsAsync()
+        {
+            var response = await _httpClient.GetAsync("api/Product/for-this-seller");
+            response.EnsureSuccessStatusCode();
+
+            var compactContracts = await response.Content.ReadFromJsonAsync<List<ProductCompactContract>>();
+            return compactContracts.Select(c => new AProduct(c)).ToList();
+        }
+
+
         // Получение полного продукта по id
         public async Task<AProduct> GetProductAsync(long productId)
         {
-            AddAuthHeader();
-
             var response = await _httpClient.GetAsync($"api/Product/{productId}");
             if (!response.IsSuccessStatusCode) return null;
 
@@ -65,23 +57,22 @@ namespace APartners.Services
             return new AProduct(contract);
         }
 
-        // Добавление нового продукта, отправляем контракт
         public async Task AddProduct(AProduct product)
         {
-            AddAuthHeader();
-
-            // Предполагаем, что есть метод для конвертации AProduct -> ProductContract (нужно реализовать)
             var contract = product.ToContract();
 
             var response = await _httpClient.PostAsJsonAsync("api/Product", contract);
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorText = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Ошибка {response.StatusCode}: {errorText}");
+            }
         }
 
         // Сохранение изменений продукта
         public async Task SaveProduct(AProduct product)
         {
-            AddAuthHeader();
-
             var contract = product.ToContract();
 
             var response = await _httpClient.PutAsJsonAsync($"api/Product/{product.Id}", contract);
@@ -94,8 +85,6 @@ namespace APartners.Services
 
         public async Task DeleteProduct(long productId)
         {
-            AddAuthHeader();
-
             var response = await _httpClient.DeleteAsync($"api/Product/{productId}");
             response.EnsureSuccessStatusCode();
         }

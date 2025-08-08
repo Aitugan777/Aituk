@@ -18,5 +18,6 @@ namespace AitukCore.Contracts
         public string Password { get; set; }
 
         public string FullName { get; set; }
+
     }
 }

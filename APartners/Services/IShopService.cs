@@ -1,4 +1,5 @@
-﻿using APartners.Models;
+﻿using AitukCore.Contracts;
+using APartners.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,12 @@ namespace APartners.Services
 {
     public interface IShopService
     {
-        Task<List<AShop>> GetShops();
+        Task<List<AShop>?> GetShops();
         Task<AShop> GetShop(long shopId);
         Task AddShop(AShop shop);
         Task DeleteShop(long shopId);
         Task SaveShop(AShop shop);
+        Task<PositionContract?> GetCoordinatesByAddressAsync(string address);
+        Task<List<AContactType>?> GetContactTypesAsync();
     }
 }

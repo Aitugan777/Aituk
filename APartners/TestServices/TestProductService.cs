@@ -102,6 +102,16 @@ namespace APartners.TestServices
             product.Shops = new System.Collections.ObjectModel.ObservableCollection<AShop>( await DIContainer.GetService<IShopService>().GetShops());
             return product;
         }
+
+        public Task<List<AProduct>> GetProductsByShopsAsync(List<long> shopIds)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<AProduct>> GetAllProductsAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }
